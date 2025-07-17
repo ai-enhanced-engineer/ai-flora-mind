@@ -1,0 +1,34 @@
+{
+  "info": {
+    "_postman_id": "",
+    "name": "Take Home Applied ML Inference",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": ""
+  },
+  "item": [
+    {
+      "name": "Inference",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"sepal_length\": 1.0,\n    \"sepal_width\": 1.0,\n    \"petal_length\": 1.0,\n    \"petal_width\": 1.0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8888/predict",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8888",
+          "path": ["predict"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
