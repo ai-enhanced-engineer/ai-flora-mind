@@ -169,7 +169,18 @@ api-docs: ## Open Swagger UI documentation (starts API if not running)
 # Build and Deployment
 # ----------------------------
 
-# build-engine: ## Build Docker image for the flora mind engine
-# 	@echo "Building docker for client: $(CLIENT_ID)"
-# 	DOCKER_BUILDKIT=1 docker build --target=runtime . -t flora-mind:latest
-# 	$(GREEN_LINE)
+docker-build: ## Build Docker image for AI Flora Mind API
+	@echo "Building AI Flora Mind Docker image..."
+	DOCKER_BUILDKIT=1 docker build -t ai-flora-mind:latest .
+	$(GREEN_LINE)
+
+docker-run: ## Run AI Flora Mind API in Docker container
+	@echo "Running AI Flora Mind API in Docker..."
+	@echo "API will be available at: http://localhost:8000"
+	@echo "Swagger UI at: http://localhost:8000/docs"
+	docker run -p 8000:8000 ai-flora-mind:latest
+	$(GREEN_LINE)
+
+docker-build-run: ## Build and run Docker container in one command
+	$(MAKE) docker-build
+	$(MAKE) docker-run
