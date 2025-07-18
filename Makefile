@@ -135,16 +135,41 @@ local-run: ## Run the flora mind service locally with auto-reload
 	uv run uvicorn ai_flora_mind.main:app --reload --host 0.0.0.0 --port 8000
 	$(GREEN_LINE)
 
+api-layer-isolate: ## Isolate the API layer locally for testing and debugging
+	@echo "Starting AI Flora Mind API in isolation..."
+	uv run python -m scripts.isolation.api_layer
+	$(GREEN_LINE)
+
+api-layer-ping: ## Test the API layer with curl requests (assumes API is running on localhost:8000)
+	@echo "Testing AI Flora Mind API endpoints..."
+	@echo "🔍 Testing health endpoint..."
+	@curl -s -X GET http://localhost:8000/health | jq '.' || echo "Health check failed or jq not available"
+	@echo ""
+	@echo "🌸 Testing prediction endpoint..."
+	@curl -s -X POST http://localhost:8000/predict \
+		-H "Content-Type: application/json" \
+		-d '{"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}' \
+		| jq '.' || echo "Prediction test failed or jq not available"
+	@echo ""
+	@echo "✅ API ping tests completed!"
+	$(GREEN_LINE)
+
+api-docs: ## Open Swagger UI documentation (starts API if not running)
+	@echo "🚀 Starting AI Flora Mind API with Swagger UI..."
+	@echo "📖 Swagger UI will be available at: http://localhost:8000/docs"
+	@echo "📋 ReDoc will be available at: http://localhost:8000/redoc"
+	@echo "📄 OpenAPI JSON at: http://localhost:8000/openapi.json"
+	@echo ""
+	@echo "🌐 Opening Swagger UI in browser..."
+	@(sleep 2 && open http://localhost:8000/docs) &
+	uv run python -m scripts.isolation.api_layer
+	$(GREEN_LINE)
+
 # ----------------------------
 # Build and Deployment
 # ----------------------------
 
-build-engine: ## Build Docker image for the flora mind engine
-	@echo "Building docker for client: $(CLIENT_ID)"
-	DOCKER_BUILDKIT=1 docker build --target=runtime . -t flora-mind:latest
-	$(GREEN_LINE)
-
-auth-gcloud: ## Authenticate with Google Cloud
-	@echo "Authenticating with Google Cloud..."
-	gcloud auth application-default login
-	$(GREEN_LINE)
+# build-engine: ## Build Docker image for the flora mind engine
+# 	@echo "Building docker for client: $(CLIENT_ID)"
+# 	DOCKER_BUILDKIT=1 docker build --target=runtime . -t flora-mind:latest
+# 	$(GREEN_LINE)

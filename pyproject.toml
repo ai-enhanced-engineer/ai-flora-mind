@@ -5,9 +5,10 @@ description = "AI Flora Mind - Python service with AI capabilities"
 authors = [{name="Leopoldo Garcia Vargas", email="lk13.dev@gmail.com"}]
 requires-python = ">=3.12"
 dependencies = [
-    # API framework
-    "fastapi>=0.95.0",
-    "uvicorn[standard]>=0.22.0",
+    # Server
+    "fastapi>=0.115.4",
+    "uvicorn>=0.32.0",
+    "gunicorn>=23.0.0",
     # Data science and ML
     "numpy>=1.25.0",
     "pandas>=2.1.0",
@@ -23,6 +24,7 @@ dependencies = [
     # Core dependencies
     "pydantic>=2.11.5",
     "pydantic-settings>=2.9.1",
+    "structlog>=25.4.0",
 ]
 
 [project.optional-dependencies]
