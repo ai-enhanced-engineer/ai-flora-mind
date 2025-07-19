@@ -18,12 +18,12 @@ class FloraAPI:
 
     def __init__(self) -> None:
         logger.info("Initializing Flora API service")
-        
+
         self.app: FastAPI = FastAPI(
             title="AI Flora Mind",
             description="Iris flower species prediction API",
             version="0.1.0",
-            lifespan=self.lifespan
+            lifespan=self.lifespan,
         )
         self.register_routes()
 
@@ -41,14 +41,14 @@ class FloraAPI:
             methods=["POST"],
             response_model=IrisPredictionResponse,
             summary="Predict iris species",
-            description="Predict the iris species based on flower measurements"
+            description="Predict the iris species based on flower measurements",
         )
         self.app.add_api_route(
-            "/health", 
-            self.health_check_endpoint, 
+            "/health",
+            self.health_check_endpoint,
             methods=["GET"],
             summary="Health check",
-            description="Check if the service is healthy"
+            description="Check if the service is healthy",
         )
 
     async def predict_endpoint(self, request: IrisPredictionRequest) -> IrisPredictionResponse:
@@ -56,17 +56,17 @@ class FloraAPI:
         logger.info(
             "Prediction request received",
             sepal_length=request.sepal_length,
-            sepal_width=request.sepal_width, 
+            sepal_width=request.sepal_width,
             petal_length=request.petal_length,
-            petal_width=request.petal_width
+            petal_width=request.petal_width,
         )
-        
+
         # TODO: Replace with actual model prediction
         # For now, return hardcoded response as requested
         prediction = "setosa"
-        
+
         logger.info("Prediction completed", prediction=prediction)
-        
+
         return IrisPredictionResponse(prediction=prediction)
 
     async def health_check_endpoint(self) -> JSONResponse:

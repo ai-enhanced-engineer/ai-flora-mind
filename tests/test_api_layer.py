@@ -37,10 +37,10 @@ async def test__predict_endpoint__returns_correct_format(async_client: AsyncClie
     }
 
     response: Response = await async_client.post("/predict", json=payload)
-    
+
     assert response.status_code == 200
     response_data: Dict[str, Any] = response.json()
-    
+
     # Validate response structure
     prediction_response: IrisPredictionResponse = IrisPredictionResponse.model_validate(response_data)
     assert prediction_response.prediction in ["setosa", "versicolor", "virginica"]
@@ -75,6 +75,6 @@ async def test__predict_endpoint__rejects_invalid_input(
 async def test__health_endpoint(async_client: AsyncClient) -> None:
     """Test health endpoint returns expected format."""
     response: Response = await async_client.get("/health")
-    
+
     assert response.status_code == 200
     assert response.json() == {"status": "healthy"}
