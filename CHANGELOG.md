@@ -2,6 +2,38 @@
 
 <!-- version list -->
 
+## v0.4.0 (2025-07-19)
+
+### Documentation
+
+- Add comprehensive experiment documentation for rule-based heuristic classifier
+  ([#7](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/7),
+  [`49262a4`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/49262a424cd9f928817b0ebec57f4d251302a008))
+
+- Create comprehensive modeling strategy summary from EDA findings
+  ([`d81a4a1`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/d81a4a1b15e540aa6b155003e780028755672c19))
+
+- Enhance modeling strategy with strategic decision framework
+  ([`d81a4a1`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/d81a4a1b15e540aa6b155003e780028755672c19))
+
+- Finalize modeling strategy document with complete strategic framework
+  ([`d81a4a1`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/d81a4a1b15e540aa6b155003e780028755672c19))
+
+### Features
+
+- Implement rule-based heuristic iris classifier with reusable evaluation framework
+  ([#7](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/7),
+  [`49262a4`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/49262a424cd9f928817b0ebec57f4d251302a008))
+
+### Refactoring
+
+- Remove Naive Bayes from modeling spectrum and rename strategy file
+  ([`d81a4a1`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/d81a4a1b15e540aa6b155003e780028755672c19))
+
+- Reorganize EDA notebook into dedicated research/eda directory
+  ([`d81a4a1`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/d81a4a1b15e540aa6b155003e780028755672c19))
+
+
 ## v0.3.0 (2025-07-18)
 
 ### Bug Fixes
