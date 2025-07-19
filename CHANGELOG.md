@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.4.2 (2025-07-19)
+
+### Research
+
+- Decision Tree Iris Classifier- Dual Validation Experiment Implementation (#8)
+  ([#8](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/8),
+  [`77ce067`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/77ce067d76f5ace3a90f55dcefb2398f5925f5e0))
+
+
 ## v0.4.1 (2025-07-19)
 
 ### Research
