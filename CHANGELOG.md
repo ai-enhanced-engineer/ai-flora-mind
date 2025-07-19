@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.4.1 (2025-07-19)
+
+### Research
+
+- Configure semantic-release to bump patch version for research and chore commits
+  ([`8c92f6c`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/8c92f6ca06760e301a02049069bea3c94228cc4c))
+
+
 ## v0.4.0 (2025-07-19)
 
 ### Documentation
