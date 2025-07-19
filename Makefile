@@ -69,7 +69,7 @@ lint: ## Lint code using ruff and autofix issues
 
 type-check: ## Perform static type checks using mypy
 	@echo "Running type checks with mypy..."
-	uv run --extra dev mypy $(SOURCE_DIR)
+	uv run --extra dev mypy $(SOURCE_DIR) research/
 	$(GREEN_LINE)
 
 # ----------------------------
@@ -163,6 +163,16 @@ api-docs: ## Open Swagger UI documentation (starts API if not running)
 	@echo "🌐 Opening Swagger UI in browser..."
 	@(sleep 2 && open http://localhost:8000/docs) &
 	uv run python -m scripts.isolation.api_layer
+	$(GREEN_LINE)
+
+# ----------------------------
+# Research and Modeling
+# ----------------------------
+
+eval-heuristic: ## Evaluate rule-based heuristic classifier on full Iris dataset
+	@echo "🌸 Evaluating Rule-Based Heuristic Iris Classifier..."
+	@echo "📊 Running comprehensive performance evaluation..."
+	uv run python -m research.baseline.rule_based_heuristic.iris_heuristic_classifier
 	$(GREEN_LINE)
 
 # ----------------------------
