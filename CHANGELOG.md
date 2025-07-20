@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.6.0 (2025-07-20)
+
+### Features
+
+- Random Forest classifier with overfitting prevention (#11)
+  ([#11](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/11),
+  [`29e61d2`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/29e61d21b7f921ececd0bd1fbf0219543bb7abd8))
+
+
 ## v0.5.1 (2025-07-20)
 
 ### Chores
