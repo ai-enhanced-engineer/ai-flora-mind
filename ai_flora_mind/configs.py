@@ -69,8 +69,7 @@ class ServiceConfig(BaseSettings):
             case ModelType.RANDOM_FOREST:
                 return f"{base_path}/random_forest.joblib"
             case ModelType.DECISION_TREE:
-                # TODO: Implement DecisionTreePredictor
-                raise ValueError(f"Model file not configured for model type: {self.model_type.value}")
+                return f"{base_path}/decision_tree.joblib"
             case ModelType.XGBOOST:
                 # TODO: Implement XGBoostPredictor
                 raise ValueError(f"Model file not configured for model type: {self.model_type.value}")

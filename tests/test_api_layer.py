@@ -12,7 +12,9 @@ from ai_flora_mind.server.schemas import IrisPredictionResponse
 # ----------------------
 
 
-@pytest_asyncio.fixture(scope="function", params=[ModelType.HEURISTIC, ModelType.RANDOM_FOREST])
+@pytest_asyncio.fixture(
+    scope="function", params=[ModelType.HEURISTIC, ModelType.RANDOM_FOREST, ModelType.DECISION_TREE]
+)
 async def async_client(
     request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch
 ) -> AsyncGenerator[AsyncClient, None]:

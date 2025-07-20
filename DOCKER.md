@@ -4,27 +4,40 @@ This guide covers how to deploy AI Flora Mind using Docker and Docker Compose wi
 
 ## Quick Start
 
-### 1. Build Services
+### Using Service Commands (Recommended)
 
-Build all Docker images:
+The easiest way to manage the AI Flora Mind service:
+
 ```bash
+# Build and start service (decision_tree model by default)
+make service-quick-start
+
+# Or step by step:
+make service-build    # Build the service
+make service-start    # Start the service
+make service-stop     # Stop the service
+
+# Use different models:
+FLORA_MODEL_TYPE=heuristic make service-start
+FLORA_MODEL_TYPE=random_forest make service-start
+FLORA_MODEL_TYPE=decision_tree make service-start
+```
+
+### Using Docker Compose Directly
+
+Alternative approach using docker-compose commands:
+```bash
+# Build services
 make docker-compose-build
 # or
 docker-compose build
-```
 
-### 2. Start Services
-
-Start the service:
-```bash
-# Using default heuristic model
+# Start services
 docker-compose up ai-flora-mind-service
 
-# Using Random Forest model
+# With specific model types
 FLORA_MODEL_TYPE=random_forest docker-compose up ai-flora-mind-service
-
-# Using make target
-make docker-compose-up
+FLORA_MODEL_TYPE=decision_tree docker-compose up ai-flora-mind-service
 ```
 
 Service will be available at: `http://localhost:8000`
@@ -58,15 +71,25 @@ All models are packaged inside the Docker image:
 | Model Type | Internal Path | Description |
 |------------|---------------|-------------|
 | `heuristic` | N/A (rule-based) | Fast, lightweight, no file needed |
-| `random_forest` | `/models/random_forest_regularized_2025_07_19_234849.joblib` | High accuracy, regularized |
-| `decision_tree` | `/models/decision_tree_comprehensive_2025_07_19_233107.joblib` | Interpretable (not implemented) |
-| `xgboost` | `/models/xgboost_optimized_2025_07_20_005952.joblib` | Maximum performance (not implemented) |
+| `random_forest` | `registry/prd/random_forest.joblib` | High accuracy, 14 features, regularized |
+| `decision_tree` | `registry/prd/decision_tree.joblib` | High interpretability, 5 features, fast |
+| `xgboost` | `registry/prd/xgboost.joblib` | Maximum performance (not implemented) |
 
 ## Advanced Deployment
 
 ### Make Targets
 
 Use convenient Make targets for common operations:
+
+**Service Management (Recommended):**
+```bash
+make service-build        # Build AI Flora Mind service
+make service-start        # Start AI Flora Mind service  
+make service-stop         # Stop AI Flora Mind service
+make service-quick-start  # Build and start in one command
+```
+
+**Docker Compose Operations:**
 ```bash
 make docker-compose-build    # Build all services
 make docker-compose-up       # Start services with helpful guidance
@@ -116,8 +139,9 @@ curl -X POST http://localhost:8000/predict \
     "petal_width": 0.2
   }'
 
-# Test random forest model
-curl -X POST http://localhost:8001/predict \
+# Test decision tree model  
+FLORA_MODEL_TYPE=decision_tree docker run --rm -p 8000:8000 -e FLORA_MODEL_TYPE=decision_tree ai-flora-mind &
+curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
   -d '{
     "sepal_length": 5.1,
@@ -139,13 +163,15 @@ Expected response:
 | Model | Startup Time | Memory Usage | Prediction Speed | Accuracy |
 |-------|--------------|--------------|------------------|----------|
 | Heuristic | ~1s | ~50MB | ~1ms | Good |
+| Decision Tree | ~3s | ~80MB | ~2ms | Very Good |
 | Random Forest | ~10s | ~150MB | ~5ms | Excellent |
 
 ### Scaling Recommendations
 
 1. **High Traffic**: Use heuristic model with horizontal scaling
-2. **High Accuracy**: Use Random Forest with load balancer
-3. **Mixed Workload**: Use nginx load balancer with both models
+2. **Balanced Performance**: Use decision tree for good accuracy with fast responses
+3. **High Accuracy**: Use Random Forest with load balancer
+4. **Mixed Workload**: Use nginx load balancer with multiple models
 
 ### Monitoring
 

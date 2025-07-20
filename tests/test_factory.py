@@ -14,7 +14,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 from ai_flora_mind.configs import ModelType, ServiceConfig
 from ai_flora_mind.factory import get_predictor
-from ai_flora_mind.predictors import BasePredictor, HeuristicPredictor, RandomForestPredictor
+from ai_flora_mind.predictors import BasePredictor, DecisionTreePredictor, HeuristicPredictor, RandomForestPredictor
 
 
 @pytest.mark.unit
@@ -28,7 +28,7 @@ def test__get_predictor__heuristic_model_creates_heuristic_predictor() -> None:
 
 
 @pytest.mark.unit
-@pytest.mark.parametrize("model_type", ["decision_tree", "xgboost"])
+@pytest.mark.parametrize("model_type", ["xgboost"])
 def test__get_predictor__unimplemented_models_fall_back_to_heuristic(
     monkeypatch: pytest.MonkeyPatch, model_type: str
 ) -> None:
@@ -57,25 +57,28 @@ def test__get_predictor__logging_behavior_for_heuristic_model(caplog: pytest.Log
 
 
 @pytest.mark.unit
+def test__get_predictor__decision_tree_model_creates_decision_tree_predictor() -> None:
+    """Test that decision tree model creates DecisionTreePredictor."""
+    if not os.path.exists("registry/prd/decision_tree.joblib"):
+        pytest.skip("Production decision tree model not available")
+
+    os.environ["FLORA_MODEL_TYPE"] = "decision_tree"
+    try:
+        config = ServiceConfig()
+        predictor = get_predictor(config)
+
+        assert isinstance(predictor, DecisionTreePredictor)
+        assert isinstance(predictor, BasePredictor)
+    finally:
+        os.environ.pop("FLORA_MODEL_TYPE", None)
+
+
+@pytest.mark.unit
 def test__get_predictor__logging_behavior_for_fallback_models(
     caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Test that warning logs are generated for unimplemented models."""
-    # Test Decision Tree fallback
-    monkeypatch.setenv("FLORA_MODEL_TYPE", "decision_tree")
-    config_dt = ServiceConfig()
-
-    with caplog.at_level("WARNING"):
-        predictor_dt = get_predictor(config_dt)
-
-    assert isinstance(predictor_dt, HeuristicPredictor)
-
-    # Check warning log messages for decision tree
-    log_messages = [record.message for record in caplog.records if record.levelname == "WARNING"]
-    assert any("Decision Tree predictor not yet implemented" in msg for msg in log_messages)
-
-    # Clear logs and test XGBoost
-    caplog.clear()
+    # Test XGBoost fallback only (decision tree is now implemented)
     monkeypatch.setenv("FLORA_MODEL_TYPE", "xgboost")
     config_xgb = ServiceConfig()
 
@@ -219,4 +222,19 @@ def test__get_predictor__value_error_from_random_forest_creation(monkeypatch: py
     monkeypatch.setattr(ServiceConfig, "get_model_path", mock_get_model_path)
 
     with pytest.raises(ValueError, match="Random Forest model requires a file path"):
+        get_predictor(config)
+
+
+@pytest.mark.unit
+def test__get_predictor__value_error_from_decision_tree_creation(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("FLORA_MODEL_TYPE", "decision_tree")
+    config = ServiceConfig()
+
+    # Mock get_model_path to return None to trigger ValueError
+    def mock_get_model_path(self) -> str:
+        return None
+
+    monkeypatch.setattr(ServiceConfig, "get_model_path", mock_get_model_path)
+
+    with pytest.raises(ValueError, match="Decision Tree model requires a file path"):
         get_predictor(config)

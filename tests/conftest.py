@@ -9,7 +9,7 @@ from typing import List, Tuple
 import pytest
 
 from ai_flora_mind.configs import IrisMeasurements
-from ai_flora_mind.predictors import HeuristicPredictor, RandomForestPredictor
+from ai_flora_mind.predictors import DecisionTreePredictor, HeuristicPredictor, RandomForestPredictor
 
 
 @pytest.fixture
@@ -20,6 +20,11 @@ def heuristic_predictor() -> HeuristicPredictor:
 @pytest.fixture
 def random_forest_predictor() -> RandomForestPredictor:
     return RandomForestPredictor()
+
+
+@pytest.fixture
+def decision_tree_predictor() -> DecisionTreePredictor:
+    return DecisionTreePredictor()
 
 
 @pytest.fixture
@@ -35,6 +40,24 @@ def temp_model_path(tmp_path):
     model.fit(X_dummy, y_dummy)
 
     temp_model_file = tmp_path / "test_model.joblib"
+    joblib.dump(model, temp_model_file)
+
+    return str(temp_model_file)
+
+
+@pytest.fixture
+def temp_decision_tree_model_path(tmp_path):
+    import joblib
+    import numpy as np
+    from sklearn.tree import DecisionTreeClassifier
+
+    model = DecisionTreeClassifier(max_depth=5, random_state=42)
+    # 5 features to match Decision Tree feature engineering (4 original + petal_area)
+    X_dummy = np.random.rand(10, 5)
+    y_dummy = ["setosa"] * 3 + ["versicolor"] * 3 + ["virginica"] * 4
+    model.fit(X_dummy, y_dummy)
+
+    temp_model_file = tmp_path / "test_decision_tree_model.joblib"
     joblib.dump(model, temp_model_file)
 
     return str(temp_model_file)

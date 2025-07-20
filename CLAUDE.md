@@ -16,6 +16,14 @@ Complete development guide consolidating essential information for efficient dev
 - **Test**: `make test-validate-branch` (format + lint + test)
 - **Line length**: 120 characters
 
+### Service Management
+- **Build service**: `make service-build` (builds Docker image)
+- **Start service**: `make service-start` (starts API at http://localhost:8000)
+- **Stop service**: `make service-stop` (stops running service)
+- **Quick start**: `make service-quick-start` (build + start in one command)
+- **Model selection**: `FLORA_MODEL_TYPE=<type> make service-start`
+  - Available types: `heuristic`, `decision_tree`, `random_forest`, `xgboost`
+
 ### Testing
 - `make unit-test` - Unit tests
 - `make functional-test` - Functional tests 
@@ -449,7 +457,7 @@ Before committing new predictor integration:
 - [ ] **Configuration**: Model type enum and path configuration updated
 - [ ] **Factory**: Predictor registered in factory with proper error handling
 - [ ] **Registry**: Production model copied to `registry/prd/` with clean name
-- [ ] **Docker**: Build succeeds and container runs with new model type
+- [ ] **Service**: Build succeeds and service runs with new model type (`make service-quick-start`)
 - [ ] **Documentation**: CLI tools and deployment docs updated
 - [ ] **Validation**: `make all-test-validate-branch` passes
 - [ ] **Manual Testing**: API responds correctly with new predictor
@@ -466,7 +474,7 @@ feat: integrate {AlgorithmName} predictor with production registry
 - Register {algorithm_name} model type in configuration and factory
 - Promote trained model to registry/prd/{algorithm_name}.joblib
 - Update API integration tests to include {algorithm_name} model type
-- Verify Docker deployment with FLORA_MODEL_TYPE={algorithm_name}
+- Verify service deployment with `FLORA_MODEL_TYPE={algorithm_name} make service-start`
 
 Model Performance: {accuracy}% accuracy on test set
 Production Ready: All tests pass, Docker verified, documentation updated

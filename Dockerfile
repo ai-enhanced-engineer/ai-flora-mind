@@ -39,6 +39,9 @@ COPY --from=builder /app/ai_flora_mind /ai_flora_mind
 # Copy production models into the image from registry
 COPY registry/prd /app/registry/prd
 
+# Set working directory to /app for consistent relative paths
+WORKDIR /app
+
 # Update the PATH environment variable to prioritize binaries from the virtual environment
 ENV PATH="/app/.venv/bin:$PATH"
 
@@ -49,4 +52,4 @@ ENV PYTHONPATH="/:$PYTHONPATH"
 EXPOSE 8000
 
 # Start the application using `gunicorn` managed by `uv`
-CMD ["uv", "run", "gunicorn", "-c", "ai_flora_mind/server/gunicorn_config.py", "ai_flora_mind.server.main:get_app"]
+CMD ["uv", "run", "gunicorn", "-c", "/ai_flora_mind/server/gunicorn_config.py", "ai_flora_mind.server.main:get_app"]

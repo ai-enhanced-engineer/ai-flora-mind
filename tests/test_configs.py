@@ -58,7 +58,6 @@ def test__service_config__get_model_path_random_forest_returns_consistent_path(m
 @pytest.mark.parametrize(
     "model_type,expected_error",
     [
-        ("decision_tree", "Model file not configured for model type: decision_tree"),
         ("xgboost", "Model file not configured for model type: xgboost"),
     ],
 )
@@ -83,14 +82,24 @@ def test__service_config__environment_prefix_handling(monkeypatch: pytest.Monkey
 
 
 @pytest.mark.unit
+def test__service_config__get_model_path_decision_tree_returns_consistent_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that decision tree model path is correctly configured."""
+    monkeypatch.setenv("FLORA_MODEL_TYPE", "decision_tree")
+    config = ServiceConfig()
+
+    model_path = config.get_model_path()
+    assert model_path == "registry/prd/decision_tree.joblib"
+
+
+@pytest.mark.unit
 def test__service_config__error_message_includes_model_type(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test that error messages include the specific model type for debugging."""
-    monkeypatch.setenv("FLORA_MODEL_TYPE", "decision_tree")
+    monkeypatch.setenv("FLORA_MODEL_TYPE", "xgboost")
     config = ServiceConfig()
 
     with pytest.raises(ValueError) as exc_info:
         config.get_model_path()
 
     error_message = str(exc_info.value)
-    assert "decision_tree" in error_message
+    assert "xgboost" in error_message
     assert "Model file not configured" in error_message

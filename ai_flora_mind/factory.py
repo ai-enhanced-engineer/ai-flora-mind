@@ -7,7 +7,7 @@ instance based on configuration settings.
 
 from ai_flora_mind.configs import ModelType, ServiceConfig
 from ai_flora_mind.logging import get_logger
-from ai_flora_mind.predictors import BasePredictor, HeuristicPredictor, RandomForestPredictor
+from ai_flora_mind.predictors import BasePredictor, DecisionTreePredictor, HeuristicPredictor, RandomForestPredictor
 
 logger = get_logger(__name__)
 
@@ -38,10 +38,16 @@ def get_predictor(config: ServiceConfig) -> BasePredictor:
             return rf_predictor
 
         case ModelType.DECISION_TREE:
-            # TODO: Implement DecisionTreePredictor when available
-            logger.warning("Decision Tree predictor not yet implemented, falling back to Heuristic")
-            predictor = HeuristicPredictor()
-            return predictor
+            model_path = config.get_model_path()
+            if not model_path:
+                raise ValueError("Decision Tree model requires a file path")
+            dt_predictor = DecisionTreePredictor(model_path=model_path)
+            logger.info(
+                "Decision Tree predictor created successfully",
+                model_path=model_path,
+                max_depth=getattr(dt_predictor.model, "max_depth", "unknown"),
+            )
+            return dt_predictor
 
         case ModelType.XGBOOST:
             # TODO: Implement XGBoostPredictor when available
