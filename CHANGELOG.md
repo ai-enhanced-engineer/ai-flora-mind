@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.5.1 (2025-07-20)
+
+### Chores
+
+- Restructure research directory for scalability (#10)
+  ([#10](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/10),
+  [`8c2e5e7`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/8c2e5e7bbdbb060787c401e48f9e5bf6d711b3a3))
+
+
 ## v0.5.0 (2025-07-20)
 
 ### Features
