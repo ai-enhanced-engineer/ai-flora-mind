@@ -93,7 +93,7 @@ all-test: ## Run all tests with coverage report
 	uv run python -m pytest -m "not integration" -vv -s $(TEST_DIR) \
 		--cov=ai_flora_mind \
 		--cov-config=pyproject.toml \
-		--cov-fail-under=80 \
+		--cov-fail-under=90 \
 		--cov-report=term-missing
 
 # ----------------------------
@@ -102,12 +102,9 @@ all-test: ## Run all tests with coverage report
 
 validate-branch: ## Run formatting, linting, and tests (equivalent to old behavior)
 	@echo "🔍 Running validation checks..."
-	@echo "📝 Running linting..."
-	uv run ruff check .
-	@echo "✅ Linting passed!"
-	@echo "🧪 Running tests..."
-	uv run python -m pytest
-	@echo "✅ All tests passed!"
+	$(MAKE) format
+	$(MAKE) lint
+	$(MAKE) type-check
 	@echo "🎉 Branch validation successful - ready for PR!"
 
 validate-branch-strict: ## Run formatting, linting, type checks, and tests
@@ -135,23 +132,15 @@ local-run: ## Run the flora mind service locally with auto-reload
 	uv run uvicorn ai_flora_mind.main:app --reload --host 0.0.0.0 --port 8000
 	$(GREEN_LINE)
 
-api-layer-isolate: ## Isolate the API layer locally for testing and debugging
+api-layer-isolate: ## Start the API server locally for testing and debugging
 	@echo "Starting AI Flora Mind API in isolation..."
 	uv run python -m scripts.isolation.api_layer
 	$(GREEN_LINE)
 
-api-layer-ping: ## Test the API layer with curl requests (assumes API is running on localhost:8000)
-	@echo "Testing AI Flora Mind API endpoints..."
-	@echo "🔍 Testing health endpoint..."
-	@curl -s -X GET http://localhost:8000/health | jq '.' || echo "Health check failed or jq not available"
-	@echo ""
-	@echo "🌸 Testing prediction endpoint..."
-	@curl -s -X POST http://localhost:8000/predict \
-		-H "Content-Type: application/json" \
-		-d '{"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}' \
-		| jq '.' || echo "Prediction test failed or jq not available"
-	@echo ""
-	@echo "✅ API ping tests completed!"
+api-layer-validate: ## Run comprehensive API validation using full iris dataset (requires running server)
+	@echo "🧪 Running comprehensive API validation with full iris dataset..."
+	@echo "💡 Ensure API server is running first: make api-layer-isolate"
+	uv run python scripts/validation/api_comprehensive_test.py
 	$(GREEN_LINE)
 
 api-docs: ## Open Swagger UI documentation (starts API if not running)

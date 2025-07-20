@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from ..logging import configure_structlog, get_logger
+from ..predictors import HeuristicPredictor
 from .schemas import IrisPredictionRequest, IrisPredictionResponse
 
 configure_structlog()
@@ -18,6 +19,10 @@ class FloraAPI:
 
     def __init__(self) -> None:
         logger.info("Initializing Flora API service")
+
+        # Initialize the predictor
+        self.predictor = HeuristicPredictor()
+        logger.info("Heuristic predictor initialized")
 
         self.app: FastAPI = FastAPI(
             title="AI Flora Mind",
@@ -61,9 +66,8 @@ class FloraAPI:
             petal_width=request.petal_width,
         )
 
-        # TODO: Replace with actual model prediction
-        # For now, return hardcoded response as requested
-        prediction = "setosa"
+        # Use the heuristic predictor to make prediction
+        prediction = self.predictor.predict(petal_length=request.petal_length, petal_width=request.petal_width)
 
         logger.info("Prediction completed", prediction=prediction)
 

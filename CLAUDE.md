@@ -45,8 +45,14 @@ Complete development guide consolidating essential information for efficient dev
 
 ### 1. Clarity and Maintainability
 - Function and test names must be descriptive and self-explanatory
-- Use inline comments only when necessary, and only to explain non-obvious logic
-- Avoid docstrings unless documentation is essential or clarifies edge cases
+- **Inline comments**: Only add when explaining non-obvious logic or highlighting important business logic steps
+  - Never explain what the code does (redundant with readable code)
+  - Only explain why the code does something unexpected or complex
+  - Use for important algorithm steps (e.g., `# Rule 1: Perfect Setosa separation`)
+  - Avoid obvious comments like `# Initialize variables` or `# Return result`
+- **Docstrings**: Only add to functions that require explanation beyond what the function name and signature convey
+  - Never add docstrings to redundant functions like `__init__`, simple getters/setters, or self-explanatory methods
+  - Focus on business logic complexity, not implementation details
 - Follow consistent naming conventions:
   - For tests: `test__{function_name}__{what_is_being_tested}`
 
@@ -243,11 +249,12 @@ type: brief description
 - `docs`: Documentation updates
 
 ### PR Description Template
-- **Overview**: High-level summary of changes
-- **Phase-based organization**: Break large changes into logical phases
-- **Quality metrics**: Test counts, performance improvements, validation status
-- **Benefits**: For developers, architecture, and CI/CD
-- **Future enhancements**: Planned next steps
+**Important**: Always create the PR description in a .md file first (e.g., `pr_description.md`) so the user can review it. Delete this file after the PR is created.
+
+- **Overview**: High-level summary of changes that focuses on the main feature, fix or experiment being pushed. Ask the user for clarification if needed
+- **Key changes**: Main introduced abstractions and supported changes, communicated in a feature-focused way with changes grouped by functionality. Mention the file where each key change happened in each bullet point
+- **Tests**: Describe the tests added and their focus, mention the coverage if new tests are added
+- **Next steps**: Future work or enhancements planned
 
 ### Validation Checklist
 - [ ] All tests pass (existing + new)
