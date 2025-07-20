@@ -48,7 +48,6 @@ class LoggingContext(BaseSettings):
 
 
 def get_logging_level(level: str) -> int:
-    """Return the logging level based on the provided string."""
     level = level.upper()
     if level == "DEBUG":
         return logging.DEBUG
@@ -65,7 +64,6 @@ def get_logging_level(level: str) -> int:
 
 
 def get_stream(stream: str) -> TextIO:
-    """Return the appropriate stream based on the provided string."""
     if stream.lower() == "stdout":
         return sys.stdout
     elif stream.lower() == "stderr":

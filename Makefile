@@ -1,11 +1,11 @@
-.PHONY: default help clean-project clean-research environment-create environment-sync environment-delete environment-list sync-env format lint type-check unit-test functional-test integration-test all-test validate-branch validate-branch-strict test-validate-branch all-test-validate-branch local-run build-engine auth-gcloud eval-all-experiments eval-xgboost eval-xgboost-comprehensive eval-xgboost-optimized
+.PHONY: default help clean-project clean-research environment-create environment-sync environment-delete environment-list sync-env format lint type-check unit-test functional-test integration-test all-test validate-branch validate-branch-strict test-validate-branch all-test-validate-branch local-run api-layer-isolate docker-compose-build docker-compose-up docker-compose-down docker-compose-test eval-all-experiments eval-xgboost eval-xgboost-comprehensive eval-xgboost-optimized
 
 GREEN_LINE=@echo "\033[0;32m--------------------------------------------------\033[0m"
 
 SOURCE_DIR = ai_flora_mind/
 TEST_DIR = tests/
 PROJECT_VERSION := $(shell awk '/^\[project\]/ {flag=1; next} /^\[/{flag=0} flag && /^version/ {gsub(/"/, "", $$2); print $$2}' pyproject.toml)
-PYTHON_VERSION := 3.12
+PYTHON_VERSION := $(shell cat .python-version)
 CLIENT_ID = leogv
 
 default: help
@@ -32,23 +32,43 @@ clean-research: ## Clean all research outputs (models and results)
 	$(GREEN_LINE)
 
 environment-create: ## Set up Python version, venv, and install dependencies
-	@echo "Installing uv and pre-commit if missing..."
+	@echo "🔧 Installing uv if missing..."
 	@if ! command -v uv >/dev/null 2>&1; then \
+		echo "📦 Installing uv..."; \
 		python3 -m pip install --user --upgrade uv; \
+	else \
+		echo "✅ uv is already installed"; \
 	fi
-	@echo "Setting up Python $(PYTHON_VERSION) environment..."
-	uv python install $(PYTHON_VERSION)
+	@echo "🐍 Checking Python $(PYTHON_VERSION) availability..."
+	@if ! uv python list | grep -q "cpython-$(PYTHON_VERSION)"; then \
+		echo "📥 Python $(PYTHON_VERSION) not found, installing..."; \
+		uv python install $(PYTHON_VERSION); \
+		if [ $$? -eq 0 ]; then \
+			echo "✅ Python $(PYTHON_VERSION) installed successfully"; \
+		else \
+			echo "❌ Failed to install Python $(PYTHON_VERSION)"; \
+			exit 1; \
+		fi; \
+	else \
+		echo "✅ Python $(PYTHON_VERSION) is already available"; \
+	fi
+	@echo "🏗️  Creating virtual environment with Python $(PYTHON_VERSION)..."
 	uv venv --python $(PYTHON_VERSION)
+	@echo "📦 Installing project dependencies..."
 	uv sync --extra dev
-	uv pip install -e '.[dev]'
-	uv pip install pre-commit
+	@echo "🪝 Setting up pre-commit hooks..."
 	uv run pre-commit install
+	@echo "🎉 Environment setup complete!"
 	$(GREEN_LINE)
 
 environment-sync: ## Re-sync project dependencies using uv
-	@echo "Syncing up environment..."
+	@echo "🔄 Syncing project dependencies..."
+	@if [ ! -d ".venv" ]; then \
+		echo "❌ Virtual environment not found. Run 'make environment-create' first."; \
+		exit 1; \
+	fi
 	uv sync --extra dev
-	uv pip install -e '.[dev]'
+	@echo "✅ Dependencies synced successfully!"
 	$(GREEN_LINE)
 
 sync-env: environment-sync ## Alias for environment-sync
@@ -138,18 +158,24 @@ all-test-validate-branch: ## Validate branch and run all tests
 
 local-run: ## Run the flora mind service locally with auto-reload
 	@echo "Starting flora mind service locally..."
-	uv run uvicorn ai_flora_mind.main:app --reload --host 0.0.0.0 --port 8000
+	@echo "🤖 Model type: $(shell echo $${FLORA_MODEL_TYPE:-heuristic})"
+	@echo "📝 To change model: FLORA_MODEL_TYPE=random_forest make local-run"
+	@echo "📊 Available models: heuristic, random_forest, decision_tree, xgboost"
+	uv run uvicorn ai_flora_mind.server.main:get_app --factory --reload --host 0.0.0.0 --port 8000
 	$(GREEN_LINE)
 
 api-layer-isolate: ## Start the API server locally for testing and debugging
 	@echo "Starting AI Flora Mind API in isolation..."
-	uv run python -m scripts.isolation.api_layer
+	@echo "🤖 Model type: $(shell echo $${FLORA_MODEL_TYPE:-heuristic})"
+	@echo "📝 To change model: FLORA_MODEL_TYPE=random_forest make api-layer-isolate"
+	@echo "📊 Available models: heuristic, random_forest, decision_tree, xgboost"
+	uv run python -m scripts.isolation.api_layer --reload
 	$(GREEN_LINE)
 
 api-layer-validate: ## Run comprehensive API validation using full iris dataset (requires running server)
 	@echo "🧪 Running comprehensive API validation with full iris dataset..."
 	@echo "💡 Ensure API server is running first: make api-layer-isolate"
-	uv run python scripts/validation/api_comprehensive_test.py
+	uv run python -m scripts.validation.api_comprehensive_test
 	$(GREEN_LINE)
 
 api-docs: ## Open Swagger UI documentation (starts API if not running)
@@ -157,10 +183,11 @@ api-docs: ## Open Swagger UI documentation (starts API if not running)
 	@echo "📖 Swagger UI will be available at: http://localhost:8000/docs"
 	@echo "📋 ReDoc will be available at: http://localhost:8000/redoc"
 	@echo "📄 OpenAPI JSON at: http://localhost:8000/openapi.json"
+	@echo "🤖 Model type: $(shell echo $${FLORA_MODEL_TYPE:-heuristic})"
 	@echo ""
 	@echo "🌐 Opening Swagger UI in browser..."
 	@(sleep 2 && open http://localhost:8000/docs) &
-	uv run python -m scripts.isolation.api_layer
+	uv run python -m scripts.isolation.api_layer --reload
 	$(GREEN_LINE)
 
 # ----------------------------
@@ -245,8 +272,8 @@ eval-all-experiments: ## Run all iris classifier experiments in sequence
 # ----------------------------
 
 docker-build: ## Build Docker image for AI Flora Mind API
-	@echo "Building AI Flora Mind Docker image..."
-	DOCKER_BUILDKIT=1 docker build -t ai-flora-mind:latest .
+	@echo "Building AI Flora Mind Docker image with Python $(PYTHON_VERSION)..."
+	DOCKER_BUILDKIT=1 docker build --build-arg PYTHON_VERSION=$(PYTHON_VERSION) -t ai-flora-mind:latest .
 	$(GREEN_LINE)
 
 docker-run: ## Run AI Flora Mind API in Docker container
@@ -259,3 +286,49 @@ docker-run: ## Run AI Flora Mind API in Docker container
 docker-build-run: ## Build and run Docker container in one command
 	$(MAKE) docker-build
 	$(MAKE) docker-run
+
+# ----------------------------
+# Docker Compose Deployment
+# ----------------------------
+
+docker-compose-build: ## Build Docker Compose services
+	@echo "Building Docker Compose services..."
+	docker-compose build
+	$(GREEN_LINE)
+
+docker-compose-up: ## Start Docker Compose services (use docker-compose.yml to configure models)
+	@echo "Starting AI Flora Mind services..."
+	@echo "📝 Configure models in docker-compose.yml or use .env file"
+	@echo "📊 Available services:"
+	@echo "  - ai-flora-heuristic (port 8000)"
+	@echo "  - ai-flora-random-forest (port 8001)"
+	@echo "  - ai-flora-dev (port 8002, configurable)"
+	@echo ""
+	@echo "Examples:"
+	@echo "  docker-compose up ai-flora-heuristic"
+	@echo "  docker-compose up ai-flora-random-forest"
+	@echo "  docker-compose up ai-flora-dev"
+	@echo "  docker-compose up  # All services"
+	docker-compose up
+
+docker-compose-down: ## Stop all Docker Compose services
+	@echo "Stopping all AI Flora Mind services..."
+	docker-compose down
+	$(GREEN_LINE)
+
+docker-compose-test: ## Test Docker Compose deployment
+	@echo "Testing Docker Compose deployment..."
+	@echo "Starting development service for testing..."
+	docker-compose up -d ai-flora-dev
+	@echo "Waiting for service to start..."
+	@sleep 15
+	@echo "Testing health endpoint..."
+	@curl -f http://localhost:8002/health || (echo "Health check failed" && exit 1)
+	@echo "Testing prediction endpoint..."
+	@curl -X POST http://localhost:8002/predict \
+		-H "Content-Type: application/json" \
+		-d '{"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}' \
+		|| (echo "Prediction test failed" && exit 1)
+	@echo "✅ Docker Compose deployment test passed!"
+	docker-compose down
+	$(GREEN_LINE)

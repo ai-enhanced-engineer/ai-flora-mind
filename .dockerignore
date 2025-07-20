@@ -79,5 +79,6 @@ docs/
 # Local development
 scripts/
 testing/
+# Exclude entire research directory (models now in registry/prd/)
 research/
 CLAUDE.md

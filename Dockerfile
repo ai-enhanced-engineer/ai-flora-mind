@@ -36,6 +36,9 @@ COPY --from=builder --chown=app:app /app/.venv /app/.venv
 # Copy the application code (including `ai_flora_mind`) from the builder stage
 COPY --from=builder /app/ai_flora_mind /ai_flora_mind
 
+# Copy production models into the image from registry
+COPY registry/prd /app/registry/prd
+
 # Update the PATH environment variable to prioritize binaries from the virtual environment
 ENV PATH="/app/.venv/bin:$PATH"
 

@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  # AI Flora Mind Service - configurable via FLORA_MODEL_TYPE
+  ai-flora-mind-service:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Model type configuration
+      # Options: heuristic, random_forest, decision_tree, xgboost
+      - FLORA_MODEL_TYPE=${FLORA_MODEL_TYPE:-heuristic}
+    restart: unless-stopped
+
+networks:
+  default:
+    name: ai-flora-network

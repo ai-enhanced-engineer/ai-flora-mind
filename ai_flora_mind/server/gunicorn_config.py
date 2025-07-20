@@ -1,5 +1,3 @@
-"""Gunicorn configuration for AI Flora Mind API."""
-
 # Gunicorn basic settings, we can adjust them as we need.
 bind = "0.0.0.0:8000"
 workers = 4

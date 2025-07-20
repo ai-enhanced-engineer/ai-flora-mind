@@ -4,6 +4,7 @@ import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient, Response
 
+from ai_flora_mind.configs import ModelType
 from ai_flora_mind.server.schemas import IrisPredictionResponse
 
 # ----------------------
@@ -11,8 +12,28 @@ from ai_flora_mind.server.schemas import IrisPredictionResponse
 # ----------------------
 
 
+@pytest_asyncio.fixture(scope="function", params=[ModelType.HEURISTIC, ModelType.RANDOM_FOREST])
+async def async_client(
+    request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch
+) -> AsyncGenerator[AsyncClient, None]:
+    """Create async client with different model types."""
+    model_type: ModelType = request.param
+
+    # Set environment variable for model type
+    monkeypatch.setenv("FLORA_MODEL_TYPE", model_type.value)
+
+    from ai_flora_mind.server.main import get_app
+
+    transport = ASGITransport(app=get_app())
+    async with AsyncClient(transport=transport, base_url="http://testserver") as ac:
+        yield ac
+
+
 @pytest_asyncio.fixture(scope="function")
-async def async_client() -> AsyncGenerator[AsyncClient, None]:
+async def async_client_heuristic(monkeypatch: pytest.MonkeyPatch) -> AsyncGenerator[AsyncClient, None]:
+    """Create async client specifically for heuristic model."""
+    monkeypatch.setenv("FLORA_MODEL_TYPE", ModelType.HEURISTIC.value)
+
     from ai_flora_mind.server.main import get_app
 
     transport = ASGITransport(app=get_app())
@@ -105,10 +126,42 @@ async def test__predict_endpoint__rejects_invalid_input(
     ],
 )
 @pytest.mark.asyncio
-async def test__predict_endpoint__realistic_predictions(
-    async_client: AsyncClient, measurements: Dict[str, Any], expected_prediction: str
+async def test__predict_endpoint__heuristic_realistic_predictions(
+    async_client_heuristic: AsyncClient, measurements: Dict[str, Any], expected_prediction: str
 ) -> None:
-    """Test that prediction endpoint returns correct species for realistic iris measurements."""
+    """Test that prediction endpoint returns correct species for realistic iris measurements using heuristic model."""
+    response: Response = await async_client_heuristic.post("/predict", json=measurements)
+
+    assert response.status_code == 200
+    response_data: Dict[str, Any] = response.json()
+
+    # Validate response structure
+    prediction_response: IrisPredictionResponse = IrisPredictionResponse.model_validate(response_data)
+
+    # Check correct prediction (heuristic-specific expectations)
+    assert prediction_response.prediction == expected_prediction, (
+        f"Expected {expected_prediction} for petal_length={measurements['petal_length']}, "
+        f"petal_width={measurements['petal_width']}, but got {prediction_response.prediction}"
+    )
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "measurements",
+    [
+        # Clear Setosa samples (all models should agree)
+        {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2},
+        {"sepal_length": 4.9, "sepal_width": 3.0, "petal_length": 1.4, "petal_width": 0.2},
+        # Clear Virginica samples (all models should agree)
+        {"sepal_length": 6.3, "sepal_width": 3.3, "petal_length": 6.0, "petal_width": 2.5},
+        {"sepal_length": 7.1, "sepal_width": 3.0, "petal_length": 5.9, "petal_width": 2.1},
+    ],
+)
+@pytest.mark.asyncio
+async def test__predict_endpoint__model_agnostic_clear_cases(
+    async_client: AsyncClient, measurements: Dict[str, Any]
+) -> None:
+    """Test that prediction endpoint returns valid species for clear cases across all models."""
     response: Response = await async_client.post("/predict", json=measurements)
 
     assert response.status_code == 200
@@ -117,11 +170,16 @@ async def test__predict_endpoint__realistic_predictions(
     # Validate response structure
     prediction_response: IrisPredictionResponse = IrisPredictionResponse.model_validate(response_data)
 
-    # Check correct prediction
-    assert prediction_response.prediction == expected_prediction, (
-        f"Expected {expected_prediction} for petal_length={measurements['petal_length']}, "
-        f"petal_width={measurements['petal_width']}, but got {prediction_response.prediction}"
-    )
+    # Check that prediction is valid (any of the three species)
+    assert prediction_response.prediction in ["setosa", "versicolor", "virginica"]
+
+    # For very clear cases, verify expected species
+    if measurements["petal_length"] < 2.0:
+        # Clear Setosa case - all models should predict setosa
+        assert prediction_response.prediction == "setosa"
+    elif measurements["petal_length"] > 5.5 and measurements["petal_width"] > 2.0:
+        # Clear Virginica case - all models should predict virginica
+        assert prediction_response.prediction == "virginica"
 
 
 @pytest.mark.unit

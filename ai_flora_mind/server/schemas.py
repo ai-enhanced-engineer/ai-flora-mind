@@ -4,8 +4,6 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class IrisPredictionRequest(BaseModel):
-    """Request model for iris flower prediction."""
-
     sepal_length: float = Field(description="Sepal length in cm", ge=0.0, json_schema_extra={"example": 5.1})
     sepal_width: float = Field(description="Sepal width in cm", ge=0.0, json_schema_extra={"example": 3.5})
     petal_length: float = Field(description="Petal length in cm", ge=0.0, json_schema_extra={"example": 1.4})
@@ -22,8 +20,6 @@ class IrisPredictionRequest(BaseModel):
 
 
 class IrisPredictionResponse(BaseModel):
-    """Response model for iris flower prediction."""
-
     prediction: str = Field(
         description="Predicted iris species",
         pattern="^(setosa|versicolor|virginica)$",

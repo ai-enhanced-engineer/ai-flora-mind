@@ -13,6 +13,9 @@ os.environ.setdefault("STREAM", "stdout")
 # Ensure we're in development mode
 os.environ.setdefault("ENVIRONMENT", "development")
 
+# Set default model configuration if not already set
+os.environ.setdefault("FLORA_MODEL_TYPE", "heuristic")
+
 if __name__ == "__main__":
     from ai_flora_mind.server.main import get_app
 
@@ -27,6 +30,13 @@ if __name__ == "__main__":
         choices=["debug", "info", "warning", "error"],
         help="Logging level (default: info)",
     )
+    parser.add_argument(
+        "--model-type",
+        type=str,
+        default=None,
+        choices=["heuristic", "random_forest", "decision_tree", "xgboost"],
+        help="Model type to use for predictions (default: uses environment variable or heuristic)",
+    )
 
     args = parser.parse_args()
 
@@ -34,10 +44,21 @@ if __name__ == "__main__":
     if args.log_level:
         os.environ["LOGGING_LEVEL"] = args.log_level.upper()
 
+    # Override model configuration if provided
+    if args.model_type:
+        os.environ["FLORA_MODEL_TYPE"] = args.model_type
+        print(f"Model type set to: {args.model_type}")
+
     print(f"Starting AI Flora Mind API on {args.host}:{args.port}")
     print(f"Environment: {os.environ.get('ENVIRONMENT', 'development')}")
     print(f"Logging level: {os.environ.get('LOGGING_LEVEL', 'INFO')}")
+    print(f"Model type: {os.environ.get('FLORA_MODEL_TYPE', 'heuristic')}")
     print("API Documentation: http://localhost:8000/docs")
     print("Health check: http://localhost:8000/health")
+    print("Example prediction test:")
+    print(
+        '  curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" '
+        '-d \'{"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}\''
+    )
 
     uvicorn.run(get_app(), host=args.host, port=args.port, reload=args.reload, log_level=args.log_level)
