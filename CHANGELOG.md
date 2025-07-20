@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.6.1 (2025-07-20)
+
+### Research
+
+- XGBoost Classifier-- Theoretical Performance Ceiling Exploration (#12)
+  ([#12](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/12),
+  [`f7ce186`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/f7ce186063d25d12e9d544ded586907727934736))
+
+
 ## v0.6.0 (2025-07-20)
 
 ### Features
