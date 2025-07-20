@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.5.0 (2025-07-20)
+
+### Features
+
+- Operationalize iris heuristic classifier (#9)
+  ([#9](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/9),
+  [`2d9f542`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/2d9f54244748f47912ef20d7949b61f4987af90d))
+
+
 ## v0.4.2 (2025-07-19)
 
 ### Research
