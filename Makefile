@@ -1,4 +1,4 @@
-.PHONY: default help clean-project environment-create environment-sync environment-delete environment-list sync-env format lint type-check unit-test functional-test integration-test all-test validate-branch validate-branch-strict test-validate-branch all-test-validate-branch local-run build-engine auth-gcloud
+.PHONY: default help clean-project clean-research environment-create environment-sync environment-delete environment-list sync-env format lint type-check unit-test functional-test integration-test all-test validate-branch validate-branch-strict test-validate-branch all-test-validate-branch local-run build-engine auth-gcloud eval-all-experiments
 
 GREEN_LINE=@echo "\033[0;32m--------------------------------------------------\033[0m"
 
@@ -20,6 +20,15 @@ help: ## Display this help message
 clean-project: ## Clean Python caches and tooling artifacts
 	@echo "Cleaning project caches..."
 	find . -type d \( -name '.pytest_cache' -o -name '.ruff_cache' -o -name '.mypy_cache' -o -name '__pycache__' \) -exec rm -rf {} +
+	$(GREEN_LINE)
+
+clean-research: ## Clean all research outputs (models and results)
+	@echo "🧹 Cleaning research outputs..."
+	@echo "Removing all saved models..."
+	@if [ -d "research/models" ]; then rm -rf research/models/*; echo "✅ Models directory cleaned"; else echo "ℹ️  Models directory doesn't exist"; fi
+	@echo "Removing all experiment results..."
+	@if [ -d "research/results" ]; then rm -rf research/results/*; echo "✅ Results directory cleaned"; else echo "ℹ️  Results directory doesn't exist"; fi
+	@echo "🎉 Research cleanup completed!"
 	$(GREEN_LINE)
 
 environment-create: ## Set up Python version, venv, and install dependencies
@@ -174,6 +183,39 @@ eval-decision-tree-comprehensive: ## Train decision tree with comprehensive vali
 	@echo "🌳 Training Decision Tree Iris Classifier (Comprehensive Validation)..."
 	@echo "📊 Running comprehensive validation with LOOCV and repeated k-fold CV..."
 	uv run python -m research.experiments.decision_tree.iris_decision_tree_classifier --experiment comprehensive
+	$(GREEN_LINE)
+
+eval-random-forest: ## Train Random Forest with train/test split (targeting 98-99% accuracy)
+	@echo "🌲 Training Random Forest Iris Classifier (Split Experiment)..."
+	@echo "📊 Running ensemble learning with all 14 features..."
+	uv run python -m research.experiments.random_forest.iris_random_forest_classifier --experiment split
+	$(GREEN_LINE)
+
+eval-random-forest-comprehensive: ## Train Random Forest with comprehensive validation (full dataset + LOOCV + repeated k-fold)
+	@echo "🌲 Training Random Forest Iris Classifier (Comprehensive Validation)..."
+	@echo "📊 Running comprehensive validation with LOOCV and repeated k-fold CV..."
+	uv run python -m research.experiments.random_forest.iris_random_forest_classifier --experiment comprehensive
+	$(GREEN_LINE)
+
+eval-random-forest-regularized: ## Train Random Forest with regularized configuration to prevent overfitting
+	@echo "🌲 Training Random Forest Iris Classifier (Regularized Configuration)..."
+	@echo "📊 Running overfitting-prevention experiment with depth limits and reduced trees..."
+	uv run python -m research.experiments.random_forest.iris_random_forest_classifier --experiment regularized
+	$(GREEN_LINE)
+
+eval-all-experiments: ## Run all iris classifier experiments in sequence
+	@echo "🚀 Running ALL Iris Classifier Experiments..."
+	@echo "This will run all experiments: heuristic, decision tree (split + comprehensive), and random forest (split + comprehensive)"
+	@echo ""
+	$(MAKE) eval-heuristic
+	$(MAKE) eval-decision-tree
+	$(MAKE) eval-decision-tree-comprehensive
+	$(MAKE) eval-random-forest
+	$(MAKE) eval-random-forest-comprehensive
+	@echo ""
+	@echo "🎉 All experiments completed successfully!"
+	@echo "📂 Check research/results/ for experiment outputs"
+	@echo "🤖 Check research/models/ for saved models"
 	$(GREEN_LINE)
 
 # ----------------------------
