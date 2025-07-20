@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.8.0 (2025-07-20)
+
+### Features
+
+- Integrate decision tree predictor with service management tooling (#14)
+  ([#14](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/14),
+  [`e8e0d8b`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/e8e0d8b5d18cbcdae934e04505d34ebfabcdfd30))
+
+
 ## v0.7.0 (2025-07-20)
 
 ### Features
