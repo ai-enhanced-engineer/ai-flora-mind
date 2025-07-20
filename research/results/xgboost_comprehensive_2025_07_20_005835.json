@@ -1,0 +1,80 @@
+{
+  "experiment_metadata": {
+    "experiment_name": "xgboost_comprehensive",
+    "timestamp": "2025-07-20T00:58:35.698578",
+    "model_type": "iris_classifier",
+    "approach": "baseline"
+  },
+  "performance_metrics": {
+    "overall_accuracy": 0.9466666666666667,
+    "total_samples": 150,
+    "correct_predictions": 142,
+    "misclassification_count": 8
+  },
+  "validation_metrics": {
+    "loocv_accuracy": 0.9466666666666667,
+    "loocv_std": 0.2246973272847029,
+    "repeated_cv_accuracy": 0.9526666666666668,
+    "repeated_cv_std": 0.05102940328869228
+  },
+  "algorithm_details": {
+    "experiment_type": "comprehensive",
+    "n_estimators": 200,
+    "max_depth": 4,
+    "learning_rate": 0.1,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "features_used": [
+      "sepal length (cm)",
+      "sepal width (cm)",
+      "petal length (cm)",
+      "petal width (cm)",
+      "petal_area",
+      "area_ratio",
+      "is_likely_setosa",
+      "versicolor_virginica_interaction",
+      "petal_to_sepal_width_ratio"
+    ],
+    "feature_importance": {
+      "petal length (cm)": 0.27843141555786133,
+      "petal_area": 0.23631179332733154,
+      "petal width (cm)": 0.22773437201976776,
+      "area_ratio": 0.18831604719161987,
+      "versicolor_virginica_interaction": 0.034008223563432693,
+      "petal_to_sepal_width_ratio": 0.018211018294095993,
+      "sepal length (cm)": 0.011592382565140724,
+      "sepal width (cm)": 0.005394723732024431,
+      "is_likely_setosa": 0.0
+    },
+    "training_samples": 150,
+    "training_accuracy": 1.0,
+    "overfitting_gap": 0.053333333333333344
+  },
+  "total_samples": 150,
+  "overall_accuracy": 0.9466666666666667,
+  "correct_predictions": 142,
+  "per_class_accuracy": {
+    "setosa": 1.0,
+    "versicolor": 0.9,
+    "virginica": 0.9
+  },
+  "classification_report": {},
+  "confusion_matrix": [
+    [
+      50,
+      0,
+      0
+    ],
+    [
+      0,
+      45,
+      5
+    ],
+    [
+      0,
+      3,
+      47
+    ]
+  ],
+  "misclassifications": []
+}

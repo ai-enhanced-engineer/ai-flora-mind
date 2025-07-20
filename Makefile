@@ -1,4 +1,4 @@
-.PHONY: default help clean-project clean-research environment-create environment-sync environment-delete environment-list sync-env format lint type-check unit-test functional-test integration-test all-test validate-branch validate-branch-strict test-validate-branch all-test-validate-branch local-run build-engine auth-gcloud eval-all-experiments
+.PHONY: default help clean-project clean-research environment-create environment-sync environment-delete environment-list sync-env format lint type-check unit-test functional-test integration-test all-test validate-branch validate-branch-strict test-validate-branch all-test-validate-branch local-run build-engine auth-gcloud eval-all-experiments eval-xgboost eval-xgboost-comprehensive eval-xgboost-optimized
 
 GREEN_LINE=@echo "\033[0;32m--------------------------------------------------\033[0m"
 
@@ -203,15 +203,37 @@ eval-random-forest-regularized: ## Train Random Forest with regularized configur
 	uv run python -m research.experiments.random_forest.iris_random_forest_classifier --experiment regularized
 	$(GREEN_LINE)
 
+eval-xgboost: ## Train XGBoost with train/test split (targeting theoretical maximum 98-99.5% accuracy)
+	@echo "🚀 Training XGBoost Iris Classifier (Split Experiment)..."
+	@echo "📊 Running gradient boosting with targeted high-discriminative features..."
+	uv run python -m research.experiments.xgboost.iris_xgboost_classifier --experiment split
+	$(GREEN_LINE)
+
+eval-xgboost-comprehensive: ## Train XGBoost with comprehensive validation (full dataset + LOOCV)
+	@echo "🚀 Training XGBoost Iris Classifier (Comprehensive Validation)..."
+	@echo "📊 Running comprehensive validation with overfitting monitoring..."
+	uv run python -m research.experiments.xgboost.iris_xgboost_classifier --experiment comprehensive
+	$(GREEN_LINE)
+
+eval-xgboost-optimized: ## Train XGBoost with optimized hyperparameters and overfitting prevention
+	@echo "🚀 Training XGBoost Iris Classifier (Optimized Configuration)..."
+	@echo "📊 Running theoretical performance ceiling experiment with aggressive regularization..."
+	uv run python -m research.experiments.xgboost.iris_xgboost_classifier --experiment optimized
+	$(GREEN_LINE)
+
 eval-all-experiments: ## Run all iris classifier experiments in sequence
 	@echo "🚀 Running ALL Iris Classifier Experiments..."
-	@echo "This will run all experiments: heuristic, decision tree (split + comprehensive), and random forest (split + comprehensive)"
+	@echo "This will run all experiments: heuristic, decision tree (split + comprehensive), random forest (split + comprehensive + regularized), and xgboost (split + comprehensive + optimized)"
 	@echo ""
 	$(MAKE) eval-heuristic
 	$(MAKE) eval-decision-tree
 	$(MAKE) eval-decision-tree-comprehensive
 	$(MAKE) eval-random-forest
 	$(MAKE) eval-random-forest-comprehensive
+	$(MAKE) eval-random-forest-regularized
+	$(MAKE) eval-xgboost
+	$(MAKE) eval-xgboost-comprehensive
+	$(MAKE) eval-xgboost-optimized
 	@echo ""
 	@echo "🎉 All experiments completed successfully!"
 	@echo "📂 Check research/results/ for experiment outputs"

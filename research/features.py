@@ -21,6 +21,7 @@ class ModelType(Enum):
     DECISION_TREE = "decision_tree"  # Uses basic features for interpretability
     RANDOM_FOREST = "random_forest"  # Uses all engineered features for maximum accuracy
     HEURISTIC = "heuristic"  # Uses only original features
+    XGBOOST = "xgboost"  # Uses targeted high-discriminative features for gradient boosting
 
 
 def create_petal_area_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
@@ -115,6 +116,16 @@ def create_size_index_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
     """Create overall size index as average of all measurements."""
     size_index: np.ndarray[Any, Any] = np.mean(X, axis=1)
     return size_index
+
+
+def create_versicolor_vs_virginica_interaction(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
+    """Create interaction term specifically for Versicolor vs Virginica separation."""
+    petal_length = X[:, 2]
+    petal_width = X[:, 3]
+    # Interaction combining petal features for non-Setosa discrimination
+    # Based on EDA insight that Versicolor/Virginica separation is the main challenge
+    interaction: np.ndarray[Any, Any] = petal_length * petal_width * (petal_length / petal_width)
+    return interaction
 
 
 def engineer_features(
@@ -214,6 +225,65 @@ def engineer_features(
             total_features=len(enhanced_feature_names),
             petal_area_range=f"{petal_area.min():.2f}-{petal_area.max():.2f}",
             is_likely_setosa_sum=int(is_likely_setosa.sum()),
+        )
+
+        return X_enhanced, enhanced_feature_names
+
+    elif model_type == ModelType.XGBOOST:
+        # XGBoost uses targeted high-discriminative features based on EDA analysis
+        # Strategy: High CV features + perfect separability indicator + interaction terms
+
+        # High CV (coefficient of variation) features from EDA
+        petal_area = create_petal_area_feature(X)  # CV: 0.813 (highest discriminative power)
+        area_ratio = create_area_ratio_feature(petal_area, create_sepal_area_feature(X))  # Key ratio feature
+
+        # Perfect separability indicator from EDA heuristic analysis
+        is_likely_setosa = create_is_likely_setosa_feature(X)  # Binary flag for perfect Setosa separation
+
+        # Interaction terms specifically for Versicolor/Virginica boundary challenge
+        versicolor_virginica_interaction = create_versicolor_vs_virginica_interaction(X)
+        petal_to_sepal_width_ratio = create_petal_to_sepal_width_ratio_feature(X)  # Key discriminative ratio
+
+        # Stack targeted engineered features (8 total: 4 original + 4 engineered)
+        engineered_features = np.column_stack(
+            [
+                petal_area,
+                area_ratio,
+                is_likely_setosa,
+                versicolor_virginica_interaction,
+                petal_to_sepal_width_ratio,
+            ]
+        )
+
+        # Combine original features with targeted engineered features
+        X_enhanced = np.hstack([X, engineered_features])
+
+        # Create feature names for targeted engineered features
+        engineered_feature_names = [
+            "petal_area",
+            "area_ratio",
+            "is_likely_setosa",
+            "versicolor_virginica_interaction",
+            "petal_to_sepal_width_ratio",
+        ]
+
+        enhanced_feature_names = feature_names + engineered_feature_names
+
+        logger.info(
+            "Feature engineering completed",
+            total_features=X_enhanced.shape[1],
+            engineered_features=engineered_feature_names,
+        )
+
+        # Debug log for XGBoost targeted feature validation
+        logger.debug(
+            "XGBoost targeted feature stats",
+            original_features=len(feature_names),
+            engineered_features=len(engineered_feature_names),
+            total_features=len(enhanced_feature_names),
+            petal_area_range=f"{petal_area.min():.2f}-{petal_area.max():.2f}",
+            setosa_samples=int(is_likely_setosa.sum()),
+            interaction_range=f"{versicolor_virginica_interaction.min():.2f}-{versicolor_virginica_interaction.max():.2f}",
         )
 
         return X_enhanced, enhanced_feature_names
