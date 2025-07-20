@@ -1,6 +1,6 @@
 [project]
 name = "ai-flora-mind"
-version = "0.6.1"
+version = "0.7.0"
 description = "AI Flora Mind - Python service with AI capabilities"
 authors = [{name="Leopoldo Garcia Vargas", email="lk13.dev@gmail.com"}]
 requires-python = ">=3.12"

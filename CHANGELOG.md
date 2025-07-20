@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.7.0 (2025-07-20)
+
+### Features
+
+- Deploy Random Forest predictor with production model registry (#13)
+  ([#13](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/13),
+  [`5ae4fa7`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/5ae4fa700362320c550ab325c7f45ba099582fe6))
+
+
 ## v0.6.1 (2025-07-20)
 
 ### Research
