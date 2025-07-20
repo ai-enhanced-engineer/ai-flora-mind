@@ -17,7 +17,7 @@ from typing import Dict, List, Tuple
 import httpx
 
 # Import after path manipulation (ruff: E402 allowed here)
-from research.baseline.data import load_iris_data  # noqa: E402
+from research.data import load_iris_data  # noqa: E402
 
 
 async def test_api_health(client: httpx.AsyncClient, base_url: str) -> bool:

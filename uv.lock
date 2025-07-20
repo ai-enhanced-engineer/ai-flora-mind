@@ -3,7 +3,7 @@ requires-python = ">=3.12"
 
 [[package]]
 name = "ai-flora-mind"
-version = "0.4.2"
+version = "0.5.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },

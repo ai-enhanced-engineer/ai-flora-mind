@@ -251,7 +251,9 @@ def _save_results_to_json(results: Dict[str, Any], experiment_name: str) -> None
             "misclassification_count": len(results["misclassifications"]),
         },
         "per_class_accuracy": {species: float(accuracy) for species, accuracy in results["per_class_accuracy"].items()},
-        "confusion_matrix": results["confusion_matrix"].tolist(),
+        "confusion_matrix": results["confusion_matrix"].tolist()
+        if hasattr(results["confusion_matrix"], "tolist")
+        else results["confusion_matrix"],
         "classification_report": results["classification_report"],
         "algorithm_details": results.get("algorithm_details", {}),
         "misclassifications": results["misclassifications"],

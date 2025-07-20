@@ -161,19 +161,19 @@ api-docs: ## Open Swagger UI documentation (starts API if not running)
 eval-heuristic: ## Evaluate rule-based heuristic classifier on full Iris dataset
 	@echo "🌸 Evaluating Rule-Based Heuristic Iris Classifier..."
 	@echo "📊 Running comprehensive performance evaluation..."
-	uv run python -m research.baseline.rule_based_heuristic.iris_heuristic_classifier
+	uv run python -m research.experiments.rule_based_heuristic.iris_heuristic_classifier
 	$(GREEN_LINE)
 
 eval-decision-tree: ## Train decision tree with train/test split (original experiment)
 	@echo "🌳 Training Decision Tree Iris Classifier (Split Experiment)..."
 	@echo "📊 Running model training and evaluation..."
-	uv run python -m research.baseline.decision_tree.iris_decision_tree_classifier --experiment split
+	uv run python -m research.experiments.decision_tree.iris_decision_tree_classifier --experiment split
 	$(GREEN_LINE)
 
 eval-decision-tree-comprehensive: ## Train decision tree with comprehensive validation (full dataset + LOOCV + repeated k-fold)
 	@echo "🌳 Training Decision Tree Iris Classifier (Comprehensive Validation)..."
 	@echo "📊 Running comprehensive validation with LOOCV and repeated k-fold CV..."
-	uv run python -m research.baseline.decision_tree.iris_decision_tree_classifier --experiment comprehensive
+	uv run python -m research.experiments.decision_tree.iris_decision_tree_classifier --experiment comprehensive
 	$(GREEN_LINE)
 
 # ----------------------------
