@@ -42,7 +42,6 @@ def test__get_predictor__unimplemented_models_fall_back_to_heuristic(
 
 @pytest.mark.unit
 def test__get_predictor__logging_behavior_for_heuristic_model(caplog: pytest.LogCaptureFixture) -> None:
-    """Test that appropriate logs are generated for heuristic model creation."""
     config = ServiceConfig()  # Defaults to heuristic
 
     with caplog.at_level("INFO"):
@@ -58,7 +57,6 @@ def test__get_predictor__logging_behavior_for_heuristic_model(caplog: pytest.Log
 
 @pytest.mark.unit
 def test__get_predictor__decision_tree_model_creates_decision_tree_predictor() -> None:
-    """Test that decision tree model creates DecisionTreePredictor."""
     if not os.path.exists("registry/prd/decision_tree.joblib"):
         pytest.skip("Production decision tree model not available")
 
@@ -77,7 +75,6 @@ def test__get_predictor__decision_tree_model_creates_decision_tree_predictor() -
 def test__get_predictor__logging_behavior_for_fallback_models(
     caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Test that warning logs are generated for unimplemented models."""
     # Test XGBoost fallback only (decision tree is now implemented)
     monkeypatch.setenv("FLORA_MODEL_TYPE", "xgboost")
     config_xgb = ServiceConfig()
@@ -139,7 +136,6 @@ def test__get_predictor__random_forest_with_invalid_path_raises_error(monkeypatc
 
 @pytest.mark.unit
 def test__get_predictor__environment_integration_with_is_container(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that factory works correctly with IS_CONTAINER environment variable."""
     # Create a temporary model file
     with tempfile.NamedTemporaryFile(suffix=".joblib", delete=False) as temp_file:
         model = RandomForestClassifier(n_estimators=10, random_state=42)
@@ -167,7 +163,6 @@ def test__get_predictor__environment_integration_with_is_container(monkeypatch: 
 
 @pytest.mark.unit
 def test__get_predictor__error_propagation_from_predictor_initialization() -> None:
-    """Test that errors from predictor initialization propagate correctly."""
     # Create an invalid model file
     with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as temp_file:
         temp_file.write(b"not a valid joblib file")
@@ -183,7 +178,6 @@ def test__get_predictor__error_propagation_from_predictor_initialization() -> No
 
 @pytest.mark.unit
 def test__get_predictor__random_forest_model_attributes_logging(caplog: pytest.LogCaptureFixture) -> None:
-    """Test that random forest model attributes are logged correctly."""
     # Skip if production model not available
     if not os.path.exists("registry/prd/random_forest.joblib"):
         pytest.skip("Production random forest model not available")

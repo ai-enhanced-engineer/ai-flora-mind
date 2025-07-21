@@ -24,7 +24,6 @@ def test__service_config__environment_variable_override(monkeypatch: pytest.Monk
 
 @pytest.mark.unit
 def test__service_config__case_insensitive_environment_variables(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that environment variables are case insensitive."""
     monkeypatch.setenv("flora_model_type", "random_forest")
     config = ServiceConfig()
     assert config.model_type == ModelType.RANDOM_FOREST
@@ -32,7 +31,6 @@ def test__service_config__case_insensitive_environment_variables(monkeypatch: py
 
 @pytest.mark.unit
 def test__service_config__extra_environment_variables_ignored(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that extra environment variables are ignored."""
     monkeypatch.setenv("FLORA_MODEL_TYPE", "heuristic")
     monkeypatch.setenv("FLORA_UNKNOWN_VAR", "should_be_ignored")
     config = ServiceConfig()
@@ -73,7 +71,6 @@ def test__service_config__get_model_path_unimplemented_models_raise_error(
 
 @pytest.mark.unit
 def test__service_config__environment_prefix_handling(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that FLORA_ prefix is handled correctly."""
     monkeypatch.setenv("FLORA_MODEL_TYPE", "random_forest")
     monkeypatch.setenv("OTHER_MODEL_TYPE", "should_be_ignored")
 
@@ -83,7 +80,6 @@ def test__service_config__environment_prefix_handling(monkeypatch: pytest.Monkey
 
 @pytest.mark.unit
 def test__service_config__get_model_path_decision_tree_returns_consistent_path(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that decision tree model path is correctly configured."""
     monkeypatch.setenv("FLORA_MODEL_TYPE", "decision_tree")
     config = ServiceConfig()
 
@@ -93,7 +89,6 @@ def test__service_config__get_model_path_decision_tree_returns_consistent_path(m
 
 @pytest.mark.unit
 def test__service_config__error_message_includes_model_type(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that error messages include the specific model type for debugging."""
     monkeypatch.setenv("FLORA_MODEL_TYPE", "xgboost")
     config = ServiceConfig()
 

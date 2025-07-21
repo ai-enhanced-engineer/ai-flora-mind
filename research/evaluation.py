@@ -20,17 +20,6 @@ logger = get_logger(__name__)
 
 
 def evaluate_model(y_true: np.ndarray[Any, Any], y_pred: np.ndarray[Any, Any], iris_data: Bunch) -> Dict[str, Any]:
-    """
-    Evaluate model performance.
-
-    Args:
-        y_true: True labels
-        y_pred: Predicted labels
-        iris_data: Original iris dataset object for metadata
-
-    Returns:
-        Dictionary containing evaluation metrics
-    """
     logger.info("Step 4: Evaluating model performance")
 
     # Calculate performance metrics
@@ -112,13 +101,7 @@ def evaluate_model(y_true: np.ndarray[Any, Any], y_pred: np.ndarray[Any, Any], i
 
 
 def log_performance_summary(results: Dict[str, Any], experiment_name: str) -> None:
-    """
-    Log a comprehensive performance summary of the classifier and save results to JSON.
-
-    Args:
-        results: Dictionary containing evaluation metrics
-        experiment_name: Name of the experiment for JSON filename and metadata
-    """
+    """Comprehensive performance logging with EDA validation and target accuracy assessment."""
     logger.info("Generating performance summary")
 
     # Log overall performance metrics
@@ -220,13 +203,6 @@ def log_performance_summary(results: Dict[str, Any], experiment_name: str) -> No
 
 
 def _save_results_to_json(results: Dict[str, Any], experiment_name: str) -> None:
-    """
-    Save evaluation results to a timestamped JSON file in the results/ directory.
-
-    Args:
-        results: Dictionary containing evaluation metrics
-        experiment_name: Name of the experiment for filename and metadata
-    """
     # Create results directory if it doesn't exist
     results_dir = Path(__file__).parent / "results"
     results_dir.mkdir(exist_ok=True)

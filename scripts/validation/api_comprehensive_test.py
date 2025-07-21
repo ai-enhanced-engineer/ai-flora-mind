@@ -21,7 +21,6 @@ from research.data import load_iris_data  # noqa: E402
 
 
 async def test_api_health(client: httpx.AsyncClient, base_url: str) -> bool:
-    """Test if the API server is responding."""
     try:
         response = await client.get(f"{base_url}/health")
         if response.status_code == 200:
@@ -39,7 +38,6 @@ async def test_api_health(client: httpx.AsyncClient, base_url: str) -> bool:
 async def test_single_prediction(
     client: httpx.AsyncClient, base_url: str, sample: Dict[str, float]
 ) -> Tuple[bool, str]:
-    """Test a single prediction against the API."""
     try:
         response = await client.post(f"{base_url}/predict", json=sample, timeout=10.0)
         if response.status_code == 200:
@@ -54,7 +52,6 @@ async def test_single_prediction(
 
 
 def prepare_api_samples() -> Tuple[List[Dict[str, float]], List[str]]:
-    """Load iris dataset and format for API testing."""
     print("📊 Loading Iris dataset...")
     X, y, _ = load_iris_data()
 
@@ -74,7 +71,7 @@ def prepare_api_samples() -> Tuple[List[Dict[str, float]], List[str]]:
 
 
 async def run_comprehensive_test(host: str, port: int) -> None:
-    """Run comprehensive API testing against the full iris dataset."""
+    """Full dataset validation with expected 96% accuracy threshold and perfect Setosa separation."""
     base_url = f"http://{host}:{port}"
 
     print("🧪 Starting Comprehensive API Validation")
@@ -191,7 +188,6 @@ async def run_comprehensive_test(host: str, port: int) -> None:
 
 
 def main() -> None:
-    """Main entry point."""
     parser = argparse.ArgumentParser(description="Comprehensive API validation using the full Iris dataset")
     parser.add_argument("--host", type=str, default="localhost", help="API server host (default: localhost)")
     parser.add_argument("--port", type=int, default=8000, help="API server port (default: 8000)")

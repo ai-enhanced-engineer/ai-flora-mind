@@ -16,8 +16,6 @@ logger = get_logger(__name__)
 
 
 class ModelType(Enum):
-    """Enum for different model types with specific feature requirements."""
-
     DECISION_TREE = "decision_tree"  # Uses basic features for interpretability
     RANDOM_FOREST = "random_forest"  # Uses all engineered features for maximum accuracy
     HEURISTIC = "heuristic"  # Uses only original features
@@ -26,16 +24,9 @@ class ModelType(Enum):
 
 def create_petal_area_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
     """
-    Create petal area feature from petal length and width.
+    Combines the two most discriminative features identified in EDA analysis.
 
-    This engineered feature helps the decision tree better separate species
-    by combining the two most discriminative features identified in EDA.
-
-    Args:
-        X: Feature matrix with petal length in column 2 and petal width in column 3
-
-    Returns:
-        Array of petal area values
+    Critical for decision tree species separation based on research findings.
     """
     petal_length = X[:, 2]
     petal_width = X[:, 3]
@@ -52,7 +43,6 @@ def create_petal_area_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
 
 
 def create_sepal_area_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-    """Create sepal area feature from sepal length and width."""
     sepal_length = X[:, 0]
     sepal_width = X[:, 1]
     sepal_area: np.ndarray[Any, Any] = sepal_length * sepal_width
@@ -60,7 +50,6 @@ def create_sepal_area_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
 
 
 def create_petal_aspect_ratio_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-    """Create petal aspect ratio (length/width) feature."""
     petal_length = X[:, 2]
     petal_width = X[:, 3]
     # Avoid division by zero
@@ -68,7 +57,6 @@ def create_petal_aspect_ratio_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any
 
 
 def create_sepal_aspect_ratio_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-    """Create sepal aspect ratio (length/width) feature."""
     sepal_length = X[:, 0]
     sepal_width = X[:, 1]
     # Avoid division by zero
@@ -78,7 +66,6 @@ def create_sepal_aspect_ratio_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any
 def create_total_area_feature(
     petal_area: np.ndarray[Any, Any], sepal_area: np.ndarray[Any, Any]
 ) -> np.ndarray[Any, Any]:
-    """Create total area feature combining petal and sepal areas."""
     total_area: np.ndarray[Any, Any] = petal_area + sepal_area
     return total_area
 
@@ -86,40 +73,36 @@ def create_total_area_feature(
 def create_area_ratio_feature(
     petal_area: np.ndarray[Any, Any], sepal_area: np.ndarray[Any, Any]
 ) -> np.ndarray[Any, Any]:
-    """Create area ratio (petal_area/sepal_area) feature."""
     # Avoid division by zero
     return np.where(sepal_area > 0, petal_area / sepal_area, 0)
 
 
 def create_is_likely_setosa_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-    """Create binary flag for likely Setosa based on EDA heuristic rule."""
+    """EDA heuristic rule: petal_length < 2.0 achieves perfect Setosa separation."""
     petal_length = X[:, 2]
     # Rule from heuristic classifier: petal_length < 2.0 indicates Setosa
     return (petal_length < 2.0).astype(float)
 
 
 def create_petal_to_sepal_length_ratio_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-    """Create ratio of petal length to sepal length."""
     petal_length = X[:, 2]
     sepal_length = X[:, 0]
     return np.where(sepal_length > 0, petal_length / sepal_length, 0)
 
 
 def create_petal_to_sepal_width_ratio_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-    """Create ratio of petal width to sepal width."""
     petal_width = X[:, 3]
     sepal_width = X[:, 1]
     return np.where(sepal_width > 0, petal_width / sepal_width, 0)
 
 
 def create_size_index_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-    """Create overall size index as average of all measurements."""
     size_index: np.ndarray[Any, Any] = np.mean(X, axis=1)
     return size_index
 
 
 def create_versicolor_vs_virginica_interaction(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-    """Create interaction term specifically for Versicolor vs Virginica separation."""
+    """Interaction term targeting Versicolor/Virginica boundary - the main classification challenge."""
     petal_length = X[:, 2]
     petal_width = X[:, 3]
     # Interaction combining petal features for non-Setosa discrimination
@@ -132,15 +115,12 @@ def engineer_features(
     X: np.ndarray[Any, Any], feature_names: List[str], model_type: ModelType = ModelType.DECISION_TREE
 ) -> Tuple[np.ndarray[Any, Any], List[str]]:
     """
-    Engineer features based on model type requirements.
+    Model-specific feature engineering based on EDA analysis and performance requirements.
 
-    Args:
-        X: Original feature matrix (n_samples, 4)
-        feature_names: Original feature names
-        model_type: Type of model determining which features to engineer
-
-    Returns:
-        Tuple of (enhanced feature matrix, updated feature names)
+    DECISION_TREE: 5 features (interpretability focus)
+    RANDOM_FOREST: 14 features (maximum accuracy)
+    XGBOOST: 9 features (high-discriminative + interaction terms)
+    HEURISTIC: 4 features (original only)
     """
     logger.info(f"Engineering features for {model_type.value}", original_features=len(feature_names), n_samples=len(X))
 

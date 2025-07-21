@@ -16,15 +16,6 @@ logger = get_logger(__name__)
 
 
 def load_iris_data() -> Tuple[np.ndarray[Any, Any], np.ndarray[Any, Any], Bunch]:
-    """
-    Load Iris dataset and prepare it for classification.
-
-    Returns:
-        Tuple of (X, y, iris_data) where:
-        - X: Feature matrix
-        - y: Target labels as species names
-        - iris_data: Original iris dataset object
-    """
     logger.info("Loading Iris dataset")
 
     iris = load_iris()

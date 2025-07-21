@@ -18,7 +18,6 @@ from ai_flora_mind.server.schemas import IrisPredictionResponse
 async def async_client(
     request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch
 ) -> AsyncGenerator[AsyncClient, None]:
-    """Create async client with different model types."""
     model_type: ModelType = request.param
 
     # Set environment variable for model type
@@ -33,7 +32,6 @@ async def async_client(
 
 @pytest_asyncio.fixture(scope="function")
 async def async_client_heuristic(monkeypatch: pytest.MonkeyPatch) -> AsyncGenerator[AsyncClient, None]:
-    """Create async client specifically for heuristic model."""
     monkeypatch.setenv("FLORA_MODEL_TYPE", ModelType.HEURISTIC.value)
 
     from ai_flora_mind.server.main import get_app
@@ -51,7 +49,6 @@ async def async_client_heuristic(monkeypatch: pytest.MonkeyPatch) -> AsyncGenera
 @pytest.mark.unit
 @pytest.mark.asyncio
 async def test__predict_endpoint__returns_correct_format(async_client: AsyncClient) -> None:
-    """Test that prediction endpoint returns the correct response format."""
     payload: Dict[str, Any] = {
         "sepal_length": 5.1,
         "sepal_width": 3.5,
@@ -88,7 +85,6 @@ async def test__predict_endpoint__returns_correct_format(async_client: AsyncClie
 async def test__predict_endpoint__rejects_invalid_input(
     async_client: AsyncClient, payload: Dict[str, Any], expected_status: int
 ) -> None:
-    """Test that prediction endpoint only accepts supported input values."""
     response: Response = await async_client.post("/predict", json=payload)
     assert response.status_code == expected_status
 
@@ -131,7 +127,6 @@ async def test__predict_endpoint__rejects_invalid_input(
 async def test__predict_endpoint__heuristic_realistic_predictions(
     async_client_heuristic: AsyncClient, measurements: Dict[str, Any], expected_prediction: str
 ) -> None:
-    """Test that prediction endpoint returns correct species for realistic iris measurements using heuristic model."""
     response: Response = await async_client_heuristic.post("/predict", json=measurements)
 
     assert response.status_code == 200
@@ -163,7 +158,6 @@ async def test__predict_endpoint__heuristic_realistic_predictions(
 async def test__predict_endpoint__model_agnostic_clear_cases(
     async_client: AsyncClient, measurements: Dict[str, Any]
 ) -> None:
-    """Test that prediction endpoint returns valid species for clear cases across all models."""
     response: Response = await async_client.post("/predict", json=measurements)
 
     assert response.status_code == 200
@@ -187,7 +181,6 @@ async def test__predict_endpoint__model_agnostic_clear_cases(
 @pytest.mark.unit
 @pytest.mark.asyncio
 async def test__health_endpoint(async_client: AsyncClient) -> None:
-    """Test health endpoint returns expected format."""
     response: Response = await async_client.get("/health")
 
     assert response.status_code == 200

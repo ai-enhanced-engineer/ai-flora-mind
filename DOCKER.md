@@ -44,16 +44,10 @@ Service will be available at: `http://localhost:8000`
 
 ### 3. Configure Development Service
 
-For custom configuration:
+For custom configuration, use environment variables directly:
 ```bash
-# Copy example environment file
-cp .env.example .env
-
-# Edit .env file to set FLORA_MODEL_TYPE and FLORA_RF_MODEL_PATH
-vim .env
-
-# Start development service
-docker-compose up ai-flora-dev
+# Start development service with specific model
+FLORA_MODEL_TYPE=random_forest docker-compose up ai-flora-mind-service
 ```
 
 ## Configuration Options

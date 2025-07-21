@@ -34,7 +34,6 @@ from ai_flora_mind.features import (
 
 @pytest.fixture
 def sample_iris_data() -> np.ndarray:
-    """Sample iris data representing typical measurements."""
     return np.array(
         [
             [5.1, 3.5, 1.4, 0.2],  # Typical setosa
@@ -46,7 +45,6 @@ def sample_iris_data() -> np.ndarray:
 
 @pytest.fixture
 def edge_case_data() -> np.ndarray:
-    """Edge case data for testing boundary conditions."""
     return np.array(
         [
             [0.1, 0.1, 0.1, 0.1],  # Very small values
@@ -59,7 +57,6 @@ def edge_case_data() -> np.ndarray:
 
 @pytest.fixture
 def boundary_setosa_data() -> np.ndarray:
-    """Data around the Setosa boundary (petal_length = 2.0)."""
     return np.array(
         [
             [5.0, 3.0, 1.9, 0.3],  # Just below setosa threshold
@@ -71,7 +68,6 @@ def boundary_setosa_data() -> np.ndarray:
 
 @pytest.fixture
 def feature_names() -> List[str]:
-    """Standard iris feature names."""
     return ["sepal length (cm)", "sepal width (cm)", "petal length (cm)", "petal width (cm)"]
 
 
@@ -82,7 +78,6 @@ def feature_names() -> List[str]:
 
 @pytest.mark.unit
 def test__create_petal_area_feature__basic_calculation(sample_iris_data: np.ndarray) -> None:
-    """Test petal area calculation with typical data."""
     result = create_petal_area_feature(sample_iris_data)
 
     expected = np.array(
@@ -99,7 +94,6 @@ def test__create_petal_area_feature__basic_calculation(sample_iris_data: np.ndar
 
 @pytest.mark.unit
 def test__create_sepal_area_feature__basic_calculation(sample_iris_data: np.ndarray) -> None:
-    """Test sepal area calculation with typical data."""
     result = create_sepal_area_feature(sample_iris_data)
 
     expected = np.array(
@@ -116,7 +110,6 @@ def test__create_sepal_area_feature__basic_calculation(sample_iris_data: np.ndar
 
 @pytest.mark.unit
 def test__create_petal_aspect_ratio_feature__normal_cases(sample_iris_data: np.ndarray) -> None:
-    """Test petal aspect ratio calculation with normal cases."""
     result = create_petal_aspect_ratio_feature(sample_iris_data)
 
     expected = np.array(
@@ -132,7 +125,6 @@ def test__create_petal_aspect_ratio_feature__normal_cases(sample_iris_data: np.n
 
 @pytest.mark.unit
 def test__create_petal_aspect_ratio_feature__zero_width_handling(edge_case_data: np.ndarray) -> None:
-    """Test petal aspect ratio handles zero width gracefully."""
     result = create_petal_aspect_ratio_feature(edge_case_data)
 
     # Check that zero petal width (last sample) results in 0, not division error
@@ -143,7 +135,6 @@ def test__create_petal_aspect_ratio_feature__zero_width_handling(edge_case_data:
 
 @pytest.mark.unit
 def test__create_sepal_aspect_ratio_feature__zero_width_handling(edge_case_data: np.ndarray) -> None:
-    """Test sepal aspect ratio handles zero width gracefully."""
     result = create_sepal_aspect_ratio_feature(edge_case_data)
 
     # Check that zero sepal width (third sample) results in 0, not division error
@@ -154,7 +145,6 @@ def test__create_sepal_aspect_ratio_feature__zero_width_handling(edge_case_data:
 
 @pytest.mark.unit
 def test__create_total_area_feature__combination(sample_iris_data: np.ndarray) -> None:
-    """Test total area feature combines petal and sepal areas correctly."""
     petal_area = create_petal_area_feature(sample_iris_data)
     sepal_area = create_sepal_area_feature(sample_iris_data)
     result = create_total_area_feature(petal_area, sepal_area)
@@ -165,7 +155,6 @@ def test__create_total_area_feature__combination(sample_iris_data: np.ndarray) -
 
 @pytest.mark.unit
 def test__create_area_ratio_feature__normal_cases(sample_iris_data: np.ndarray) -> None:
-    """Test area ratio calculation with normal cases."""
     petal_area = create_petal_area_feature(sample_iris_data)
     sepal_area = create_sepal_area_feature(sample_iris_data)
     result = create_area_ratio_feature(petal_area, sepal_area)
@@ -176,7 +165,6 @@ def test__create_area_ratio_feature__normal_cases(sample_iris_data: np.ndarray) 
 
 @pytest.mark.unit
 def test__create_area_ratio_feature__zero_sepal_area_handling() -> None:
-    """Test area ratio handles zero sepal area gracefully."""
     petal_area = np.array([1.0, 2.0])
     sepal_area = np.array([0.0, 4.0])  # First element is zero
 
@@ -190,7 +178,6 @@ def test__create_area_ratio_feature__zero_sepal_area_handling() -> None:
 
 @pytest.mark.unit
 def test__create_is_likely_setosa_feature__boundary_detection(boundary_setosa_data: np.ndarray) -> None:
-    """Test Setosa detection at boundary conditions."""
     result = create_is_likely_setosa_feature(boundary_setosa_data)
 
     expected = np.array([1.0, 0.0, 0.0])  # Below, at, above threshold
@@ -202,7 +189,6 @@ def test__create_is_likely_setosa_feature__boundary_detection(boundary_setosa_da
 
 @pytest.mark.unit
 def test__create_petal_to_sepal_length_ratio_feature__calculation(sample_iris_data: np.ndarray) -> None:
-    """Test petal to sepal length ratio calculation."""
     result = create_petal_to_sepal_length_ratio_feature(sample_iris_data)
 
     expected = np.array(
@@ -218,7 +204,6 @@ def test__create_petal_to_sepal_length_ratio_feature__calculation(sample_iris_da
 
 @pytest.mark.unit
 def test__create_petal_to_sepal_width_ratio_feature__calculation(sample_iris_data: np.ndarray) -> None:
-    """Test petal to sepal width ratio calculation."""
     result = create_petal_to_sepal_width_ratio_feature(sample_iris_data)
 
     expected = np.array(
@@ -234,7 +219,6 @@ def test__create_petal_to_sepal_width_ratio_feature__calculation(sample_iris_dat
 
 @pytest.mark.unit
 def test__create_size_index_feature__average_calculation(sample_iris_data: np.ndarray) -> None:
-    """Test size index calculation as average of all measurements."""
     result = create_size_index_feature(sample_iris_data)
 
     expected = np.array(
@@ -250,7 +234,6 @@ def test__create_size_index_feature__average_calculation(sample_iris_data: np.nd
 
 @pytest.mark.unit
 def test__create_versicolor_vs_virginica_interaction__calculation(sample_iris_data: np.ndarray) -> None:
-    """Test Versicolor vs Virginica interaction feature calculation."""
     result = create_versicolor_vs_virginica_interaction(sample_iris_data)
 
     # Manual calculation for verification
@@ -269,7 +252,6 @@ def test__create_versicolor_vs_virginica_interaction__calculation(sample_iris_da
 
 @pytest.mark.unit
 def test__feature_functions__handle_empty_arrays() -> None:
-    """Test that feature functions handle empty arrays gracefully."""
     empty_data = np.array([]).reshape(0, 4)
 
     # Test functions that should work with empty arrays
@@ -281,7 +263,6 @@ def test__feature_functions__handle_empty_arrays() -> None:
 
 @pytest.mark.unit
 def test__feature_functions__handle_single_sample() -> None:
-    """Test that feature functions work with single sample."""
     single_sample = np.array([[5.1, 3.5, 1.4, 0.2]])
 
     petal_area = create_petal_area_feature(single_sample)
@@ -295,7 +276,6 @@ def test__feature_functions__handle_single_sample() -> None:
 
 @pytest.mark.unit
 def test__aspect_ratio_functions__extreme_values() -> None:
-    """Test aspect ratio functions with extreme values."""
     extreme_data = np.array(
         [
             [1.0, 1000.0, 1.0, 1000.0],  # Very wide sepals/petals
@@ -326,7 +306,6 @@ def test__aspect_ratio_functions__extreme_values() -> None:
 
 @pytest.mark.unit
 def test__engineer_features__heuristic_model_type(sample_iris_data: np.ndarray, feature_names: List[str]) -> None:
-    """Test feature engineering for heuristic model (no additional features)."""
     X_enhanced, names_enhanced = engineer_features(sample_iris_data, feature_names, ModelType.HEURISTIC)
 
     # Should return original data unchanged
@@ -337,7 +316,6 @@ def test__engineer_features__heuristic_model_type(sample_iris_data: np.ndarray, 
 
 @pytest.mark.unit
 def test__engineer_features__decision_tree_model_type(sample_iris_data: np.ndarray, feature_names: List[str]) -> None:
-    """Test feature engineering for decision tree model (adds petal_area)."""
     X_enhanced, names_enhanced = engineer_features(sample_iris_data, feature_names, ModelType.DECISION_TREE)
 
     # Should add 1 feature (petal_area)
@@ -355,7 +333,6 @@ def test__engineer_features__decision_tree_model_type(sample_iris_data: np.ndarr
 
 @pytest.mark.unit
 def test__engineer_features__random_forest_model_type(sample_iris_data: np.ndarray, feature_names: List[str]) -> None:
-    """Test feature engineering for Random Forest model (all 10 features)."""
     X_enhanced, names_enhanced = engineer_features(sample_iris_data, feature_names, ModelType.RANDOM_FOREST)
 
     # Should add 10 engineered features (4 original + 10 engineered = 14 total)
@@ -390,7 +367,6 @@ def test__engineer_features__random_forest_model_type(sample_iris_data: np.ndarr
 
 @pytest.mark.unit
 def test__engineer_features__xgboost_model_type(sample_iris_data: np.ndarray, feature_names: List[str]) -> None:
-    """Test feature engineering for XGBoost model (5 targeted features)."""
     X_enhanced, names_enhanced = engineer_features(sample_iris_data, feature_names, ModelType.XGBOOST)
 
     # Should add 5 targeted engineered features (4 original + 5 engineered = 9 total)
@@ -418,7 +394,6 @@ def test__engineer_features__xgboost_model_type(sample_iris_data: np.ndarray, fe
 def test__engineer_features__unknown_model_type_raises_error(
     sample_iris_data: np.ndarray, feature_names: List[str]
 ) -> None:
-    """Test that unknown model type raises ValueError."""
     # Create a mock model type that doesn't exist
     with pytest.raises(ValueError, match="Unknown model type"):
         # We can't create a new ModelType enum value, so we'll monkey-patch temporarily
@@ -430,7 +405,6 @@ def test__engineer_features__unknown_model_type_raises_error(
 
 @pytest.mark.unit
 def test__engineer_features__preserves_data_types_and_shapes() -> None:
-    """Test that feature engineering preserves proper data types and shapes."""
     # Create test data with specific dtype
     test_data = np.array([[5.1, 3.5, 1.4, 0.2]], dtype=np.float32)
     feature_names = get_feature_names()
@@ -445,7 +419,6 @@ def test__engineer_features__preserves_data_types_and_shapes() -> None:
 
 @pytest.mark.unit
 def test__engineer_features__consistent_feature_order() -> None:
-    """Test that feature engineering produces consistent feature order."""
     test_data = np.array([[5.1, 3.5, 1.4, 0.2], [6.0, 3.0, 4.0, 1.3]])
     feature_names = get_feature_names()
 
@@ -468,7 +441,6 @@ def test__engineer_features__consistent_feature_order() -> None:
 
 @pytest.mark.unit
 def test__get_feature_names__returns_correct_names() -> None:
-    """Test that get_feature_names returns the correct standard feature names."""
     names = get_feature_names()
 
     expected_names = ["sepal length (cm)", "sepal width (cm)", "petal length (cm)", "petal width (cm)"]
@@ -479,7 +451,6 @@ def test__get_feature_names__returns_correct_names() -> None:
 
 @pytest.mark.unit
 def test__feature_engineering__maintains_sample_count() -> None:
-    """Test that feature engineering maintains the number of samples."""
     # Test with different sample sizes
     for n_samples in [1, 10, 100]:
         test_data = np.random.rand(n_samples, 4) * 10  # Random data scaled appropriately
@@ -492,7 +463,6 @@ def test__feature_engineering__maintains_sample_count() -> None:
 
 @pytest.mark.functional
 def test__feature_engineering__real_iris_dataset_integration() -> None:
-    """Integration test with real iris dataset to verify feature engineering works end-to-end."""
     from sklearn.datasets import load_iris
 
     # Load real iris dataset
@@ -526,7 +496,6 @@ def test__feature_engineering__real_iris_dataset_integration() -> None:
 
 @pytest.mark.unit
 def test__feature_engineering__mathematical_properties() -> None:
-    """Test that engineered features have expected mathematical properties."""
     # Create test data with known properties
     test_data = np.array(
         [

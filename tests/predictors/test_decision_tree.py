@@ -17,7 +17,6 @@ from ai_flora_mind.predictors import BasePredictor, DecisionTreePredictor
 
 @pytest.mark.unit
 def test__decision_tree_predictor__initialization_default_model() -> None:
-    """Test DecisionTreePredictor initializes with default model path."""
     predictor = DecisionTreePredictor()
 
     assert predictor.model_path == "research/models/decision_tree_comprehensive_2025_07_19_233107.joblib"
@@ -27,7 +26,6 @@ def test__decision_tree_predictor__initialization_default_model() -> None:
 
 @pytest.mark.unit
 def test__decision_tree_predictor__initialization_custom_model(temp_decision_tree_model_path: str) -> None:
-    """Test DecisionTreePredictor initializes with custom model path."""
     predictor = DecisionTreePredictor(model_path=temp_decision_tree_model_path)
 
     assert predictor.model_path == temp_decision_tree_model_path
@@ -42,14 +40,12 @@ def test__decision_tree_predictor__initialization_custom_model(temp_decision_tre
 
 @pytest.mark.unit
 def test__decision_tree_predictor__missing_model_file_raises_error() -> None:
-    """Test that missing model file raises FileNotFoundError."""
     with pytest.raises(FileNotFoundError, match="Model file not found"):
         DecisionTreePredictor(model_path="nonexistent/path/model.joblib")
 
 
 @pytest.mark.unit
 def test__decision_tree_predictor__invalid_model_file_raises_error(tmp_path) -> None:
-    """Test that invalid model file raises RuntimeError."""
     # Create invalid model file
     invalid_file = tmp_path / "invalid.joblib"
     invalid_file.write_text("not a valid joblib file")
@@ -65,7 +61,6 @@ def test__decision_tree_predictor__invalid_model_file_raises_error(tmp_path) -> 
 
 @pytest.mark.unit
 def test__decision_tree_predictor__predict_single_measurement(temp_decision_tree_model_path: str) -> None:
-    """Test single prediction with DecisionTreePredictor."""
     predictor = DecisionTreePredictor(model_path=temp_decision_tree_model_path)
 
     # Test with typical measurements
@@ -91,7 +86,6 @@ def test__decision_tree_predictor__predict_single_measurement(temp_decision_tree
 
 @pytest.mark.unit
 def test__decision_tree_predictor__handles_edge_case_measurements(temp_decision_tree_model_path: str) -> None:
-    """Test DecisionTreePredictor handles edge case measurements."""
     predictor = DecisionTreePredictor(model_path=temp_decision_tree_model_path)
 
     # Very small measurements
@@ -112,7 +106,6 @@ def test__decision_tree_predictor__handles_edge_case_measurements(temp_decision_
 
 @pytest.mark.unit
 def test__decision_tree_predictor__feature_preparation(temp_decision_tree_model_path: str) -> None:
-    """Test that feature preparation creates correct feature matrix."""
     predictor = DecisionTreePredictor(model_path=temp_decision_tree_model_path)
 
     measurements = IrisMeasurements(sepal_length=5.1, sepal_width=3.5, petal_length=1.4, petal_width=0.2)
@@ -140,7 +133,6 @@ def test__decision_tree_predictor__feature_preparation(temp_decision_tree_model_
 
 @pytest.mark.unit
 def test__decision_tree_predictor__interface_compliance(temp_decision_tree_model_path: str) -> None:
-    """Test DecisionTreePredictor implements BasePredictor interface."""
     predictor = DecisionTreePredictor(model_path=temp_decision_tree_model_path)
 
     # Implements base interface
@@ -160,7 +152,6 @@ def test__decision_tree_predictor__interface_compliance(temp_decision_tree_model
 
 @pytest.mark.integration
 def test__decision_tree_predictor__real_model_predictions() -> None:
-    """Integration test with real trained model (if available)."""
     import os
 
     # Only run if the default model exists
@@ -191,7 +182,6 @@ def test__decision_tree_predictor__real_model_predictions() -> None:
 
 @pytest.mark.integration
 def test__decision_tree_predictor__production_model_predictions() -> None:
-    """Integration test with production model from registry."""
     import os
 
     # Only run if the production model exists

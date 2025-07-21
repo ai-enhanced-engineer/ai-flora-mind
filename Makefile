@@ -1,4 +1,18 @@
-.PHONY: default help clean-project clean-research environment-create environment-sync environment-delete environment-list sync-env format lint type-check unit-test functional-test integration-test all-test validate-branch validate-branch-strict test-validate-branch all-test-validate-branch api-local api-dev api-validate api-docs service-build service-start service-stop service-quick-start service-validate eval-all-experiments eval-xgboost eval-xgboost-comprehensive eval-xgboost-optimized
+.PHONY: default help clean-project clean-research environment-create environment-sync environment-delete environment-list sync-env format lint type-check unit-test functional-test integration-test all-test validate-branch validate-branch-strict test-validate-branch all-test-validate-branch api-dev api-validate api-docs service-build service-start service-stop service-quick-start service-validate
+
+# ==============================================================================
+# USAGE EXAMPLES
+# ==============================================================================
+# First time setup:     make environment-create
+# Start development:    make api-dev
+# Run quality checks:   make validate-branch
+# Run all tests:        make all-test-validate-branch
+# Deploy locally:       make service-quick-start
+# Clean everything:     make clean-project clean-research
+#
+# Change model type:    FLORA_MODEL_TYPE=random_forest make api-dev
+# Research tasks:       make -f research.mk help
+# ==============================================================================
 
 GREEN_LINE=@echo "\033[0;32m--------------------------------------------------\033[0m"
 
@@ -7,6 +21,9 @@ TEST_DIR = tests/
 PROJECT_VERSION := $(shell awk '/^\[project\]/ {flag=1; next} /^\[/{flag=0} flag && /^version/ {gsub(/"/, "", $$2); print $$2}' pyproject.toml)
 PYTHON_VERSION := $(shell cat .python-version)
 CLIENT_ID = leogv
+
+# Include research and modeling targets
+include research.mk
 
 default: help
 
@@ -156,29 +173,30 @@ all-test-validate-branch: ## Validate branch and run all tests
 # Local Development
 # ----------------------------
 
-api-local: ## Run the flora mind API locally with auto-reload
-	@echo "Starting flora mind API locally..."
-	@echo "🤖 Model type: $(shell echo $${FLORA_MODEL_TYPE:-heuristic})"
-	@echo "📝 To change model: FLORA_MODEL_TYPE=random_forest make api-local"
-	@echo "📊 Available models: heuristic, random_forest, decision_tree, xgboost"
-	uv run uvicorn ai_flora_mind.server.main:get_app --factory --reload --host 0.0.0.0 --port 8000
-	$(GREEN_LINE)
-
-api-dev: ## Start the API server in development mode for testing and debugging
+api-dev: environment-sync ## Start API server in dev mode. Example: FLORA_MODEL_TYPE=random_forest make api-dev'
 	@echo "Starting AI Flora Mind API in development mode..."
-	@echo "🤖 Model type: $(shell echo $${FLORA_MODEL_TYPE:-heuristic})"
-	@echo "📝 To change model: FLORA_MODEL_TYPE=random_forest make api-dev"
-	@echo "📊 Available models: heuristic, random_forest, decision_tree, xgboost"
-	uv run python -m scripts.isolation.api_layer --reload
+	@echo "🤖 Current model: $(shell echo $${FLORA_MODEL_TYPE:-heuristic})"
+	@echo ""
+	@echo "📝 Model selection examples:"
+	@echo "   FLORA_MODEL_TYPE=heuristic make api-dev       # Rule-based classifier"
+	@echo "   FLORA_MODEL_TYPE=decision_tree make api-dev   # Decision tree (96% accuracy)"
+	@echo "   FLORA_MODEL_TYPE=random_forest make api-dev   # Random forest (96% accuracy)"
+	@echo "   FLORA_MODEL_TYPE=xgboost make api-dev         # XGBoost (not implemented)"
+	@echo ""
+	@echo "🔧 Advanced options using ARGS:"
+	@echo "   make api-dev ARGS='--model-type decision_tree --log-level debug'"
+	@echo "   make api-dev ARGS='--port 8001 --host localhost'"
+	@echo "   make api-dev ARGS='--help'  # Show all CLI options"
+	uv run python -m scripts.isolation.api_layer --reload $(ARGS)
 	$(GREEN_LINE)
 
-api-validate: ## Run comprehensive API validation using full iris dataset (requires running server)
+api-validate: environment-sync ## Run comprehensive API validation using full iris dataset (requires running server)
 	@echo "🧪 Running comprehensive API validation with full iris dataset..."
 	@echo "💡 Ensure API server is running first: make api-dev"
 	uv run python -m scripts.validation.api_comprehensive_test
 	$(GREEN_LINE)
 
-api-docs: ## Open Swagger UI documentation (starts API if not running)
+api-docs: environment-sync ## Open Swagger UI documentation (starts API if not running)
 	@echo "🚀 Starting AI Flora Mind API with Swagger UI..."
 	@echo "📖 Swagger UI will be available at: http://localhost:8000/docs"
 	@echo "📋 ReDoc will be available at: http://localhost:8000/redoc"
@@ -190,82 +208,6 @@ api-docs: ## Open Swagger UI documentation (starts API if not running)
 	uv run python -m scripts.isolation.api_layer --reload
 	$(GREEN_LINE)
 
-# ----------------------------
-# Research and Modeling
-# ----------------------------
-
-eval-heuristic: ## Evaluate rule-based heuristic classifier on full Iris dataset
-	@echo "🌸 Evaluating Rule-Based Heuristic Iris Classifier..."
-	@echo "📊 Running comprehensive performance evaluation..."
-	uv run python -m research.experiments.rule_based_heuristic.iris_heuristic_classifier
-	$(GREEN_LINE)
-
-eval-decision-tree: ## Train decision tree with train/test split (original experiment)
-	@echo "🌳 Training Decision Tree Iris Classifier (Split Experiment)..."
-	@echo "📊 Running model training and evaluation..."
-	uv run python -m research.experiments.decision_tree.iris_decision_tree_classifier --experiment split
-	$(GREEN_LINE)
-
-eval-decision-tree-comprehensive: ## Train decision tree with comprehensive validation (full dataset + LOOCV + repeated k-fold)
-	@echo "🌳 Training Decision Tree Iris Classifier (Comprehensive Validation)..."
-	@echo "📊 Running comprehensive validation with LOOCV and repeated k-fold CV..."
-	uv run python -m research.experiments.decision_tree.iris_decision_tree_classifier --experiment comprehensive
-	$(GREEN_LINE)
-
-eval-random-forest: ## Train Random Forest with train/test split (targeting 98-99% accuracy)
-	@echo "🌲 Training Random Forest Iris Classifier (Split Experiment)..."
-	@echo "📊 Running ensemble learning with all 14 features..."
-	uv run python -m research.experiments.random_forest.iris_random_forest_classifier --experiment split
-	$(GREEN_LINE)
-
-eval-random-forest-comprehensive: ## Train Random Forest with comprehensive validation (full dataset + LOOCV + repeated k-fold)
-	@echo "🌲 Training Random Forest Iris Classifier (Comprehensive Validation)..."
-	@echo "📊 Running comprehensive validation with LOOCV and repeated k-fold CV..."
-	uv run python -m research.experiments.random_forest.iris_random_forest_classifier --experiment comprehensive
-	$(GREEN_LINE)
-
-eval-random-forest-regularized: ## Train Random Forest with regularized configuration to prevent overfitting
-	@echo "🌲 Training Random Forest Iris Classifier (Regularized Configuration)..."
-	@echo "📊 Running overfitting-prevention experiment with depth limits and reduced trees..."
-	uv run python -m research.experiments.random_forest.iris_random_forest_classifier --experiment regularized
-	$(GREEN_LINE)
-
-eval-xgboost: ## Train XGBoost with train/test split (targeting theoretical maximum 98-99.5% accuracy)
-	@echo "🚀 Training XGBoost Iris Classifier (Split Experiment)..."
-	@echo "📊 Running gradient boosting with targeted high-discriminative features..."
-	uv run python -m research.experiments.xgboost.iris_xgboost_classifier --experiment split
-	$(GREEN_LINE)
-
-eval-xgboost-comprehensive: ## Train XGBoost with comprehensive validation (full dataset + LOOCV)
-	@echo "🚀 Training XGBoost Iris Classifier (Comprehensive Validation)..."
-	@echo "📊 Running comprehensive validation with overfitting monitoring..."
-	uv run python -m research.experiments.xgboost.iris_xgboost_classifier --experiment comprehensive
-	$(GREEN_LINE)
-
-eval-xgboost-optimized: ## Train XGBoost with optimized hyperparameters and overfitting prevention
-	@echo "🚀 Training XGBoost Iris Classifier (Optimized Configuration)..."
-	@echo "📊 Running theoretical performance ceiling experiment with aggressive regularization..."
-	uv run python -m research.experiments.xgboost.iris_xgboost_classifier --experiment optimized
-	$(GREEN_LINE)
-
-eval-all-experiments: ## Run all iris classifier experiments in sequence
-	@echo "🚀 Running ALL Iris Classifier Experiments..."
-	@echo "This will run all experiments: heuristic, decision tree (split + comprehensive), random forest (split + comprehensive + regularized), and xgboost (split + comprehensive + optimized)"
-	@echo ""
-	$(MAKE) eval-heuristic
-	$(MAKE) eval-decision-tree
-	$(MAKE) eval-decision-tree-comprehensive
-	$(MAKE) eval-random-forest
-	$(MAKE) eval-random-forest-comprehensive
-	$(MAKE) eval-random-forest-regularized
-	$(MAKE) eval-xgboost
-	$(MAKE) eval-xgboost-comprehensive
-	$(MAKE) eval-xgboost-optimized
-	@echo ""
-	@echo "🎉 All experiments completed successfully!"
-	@echo "📂 Check research/results/ for experiment outputs"
-	@echo "🤖 Check research/models/ for saved models"
-	$(GREEN_LINE)
 
 # ----------------------------
 # Build and Deployment
@@ -280,8 +222,15 @@ service-start: ## Start AI Flora Mind service
 	@echo "Starting AI Flora Mind service..."
 	@echo "API will be available at: http://localhost:8000"
 	@echo "Swagger UI at: http://localhost:8000/docs"
-	@echo "Model type: ${FLORA_MODEL_TYPE:-decision_tree} (override with FLORA_MODEL_TYPE=<type>)"
-	@echo "Available types: heuristic, decision_tree, random_forest, xgboost"
+	@echo ""
+	@echo "📝 Model Configuration:"
+	@echo "   Current model: ${FLORA_MODEL_TYPE:-decision_tree}"
+	@echo "   Available models: heuristic, decision_tree, random_forest, xgboost"
+	@echo ""
+	@echo "🔧 To change the model type:"
+	@echo "   1. Edit docker-compose.yml and modify FLORA_MODEL_TYPE value"
+	@echo "   2. Or override at runtime: FLORA_MODEL_TYPE=random_forest make service-start"
+	@echo ""
 	docker-compose up ai-flora-mind-service
 	$(GREEN_LINE)
 
@@ -294,7 +243,7 @@ service-quick-start: ## Build and start AI Flora Mind service in one command
 	$(MAKE) service-build
 	$(MAKE) service-start
 
-service-validate: ## Start service and run comprehensive validation with full iris dataset
+service-validate: environment-sync ## Start service and run comprehensive validation with full iris dataset
 	@echo "🧪 Starting AI Flora Mind service and running comprehensive validation..."
 	@echo "Starting service for testing..."
 	docker-compose up -d ai-flora-mind-service
@@ -307,3 +256,9 @@ service-validate: ## Start service and run comprehensive validation with full ir
 	@echo "✅ Service comprehensive validation passed!"
 	$(MAKE) service-stop
 	$(GREEN_LINE)
+
+
+# ----------------------------
+# Research and Modeling (from research.mk)
+# ----------------------------
+# See research.mk for all research and modeling targets

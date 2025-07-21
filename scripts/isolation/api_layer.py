@@ -13,12 +13,7 @@ os.environ.setdefault("STREAM", "stdout")
 # Ensure we're in development mode
 os.environ.setdefault("ENVIRONMENT", "development")
 
-# Set default model configuration if not already set
-os.environ.setdefault("FLORA_MODEL_TYPE", "heuristic")
-
 if __name__ == "__main__":
-    from ai_flora_mind.server.main import get_app
-
     parser = argparse.ArgumentParser(description="Run the AI Flora Mind API in isolation for testing.")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run the service on (default: 0.0.0.0)")
     parser.add_argument("--port", type=int, default=8000, help="Port to run the service on (default: 8000)")
@@ -61,4 +56,11 @@ if __name__ == "__main__":
         '-d \'{"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}\''
     )
 
-    uvicorn.run(get_app(), host=args.host, port=args.port, reload=args.reload, log_level=args.log_level)
+    uvicorn.run(
+        "ai_flora_mind.server.main:get_app",
+        factory=True,
+        host=args.host,
+        port=args.port,
+        reload=args.reload,
+        log_level=args.log_level,
+    )

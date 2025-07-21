@@ -24,6 +24,17 @@ Complete development guide consolidating essential information for efficient dev
 - **Model selection**: `FLORA_MODEL_TYPE=<type> make service-start`
   - Available types: `heuristic`, `decision_tree`, `random_forest`, `xgboost`
 
+### API Development
+- **Start API locally**: `make api-dev` (with auto-reload)
+  - `FLORA_MODEL_TYPE=heuristic make api-dev` - Rule-based classifier
+  - `FLORA_MODEL_TYPE=decision_tree make api-dev` - Decision tree (96% accuracy)
+  - `FLORA_MODEL_TYPE=random_forest make api-dev` - Random forest (96% accuracy)
+  - `FLORA_MODEL_TYPE=xgboost make api-dev` - XGBoost (not implemented)
+  - `make api-dev ARGS='--model-type decision_tree --log-level debug'` - CLI arguments
+  - `make api-dev ARGS='--port 8001 --host localhost'` - Custom port/host
+- **Validate API**: `make api-validate` (run comprehensive tests)
+- **API with docs**: `make api-docs` (opens Swagger UI)
+
 ### Testing
 - `make unit-test` - Unit tests
 - `make functional-test` - Functional tests 
@@ -244,6 +255,8 @@ async with get_resource() as resource:
 ## Communication and Collaboration
 
 ### Commit Message Structure
+
+#### General Structure
 ```
 type: brief description
 
@@ -259,6 +272,47 @@ type: brief description
 - `refactor`: Code restructuring without functional changes
 - `test`: Testing improvements or additions
 - `docs`: Documentation updates
+
+#### Feature Integration Template
+For major feature additions like new predictors, use this concrete structure:
+
+```
+feat: integrate {FeatureName} with {MainBenefit}
+
+- Implement {ComponentName} class with {TechnicalDetails}
+- Add comprehensive test suite with {TestCount} test cases covering {Coverage}%
+- Register {feature_name} in configuration and factory with {Integration}
+- Promote {artifact} to {location} for {purpose}
+- Refactor {system} with {improvement} for {benefit}
+- Fix {issue} for {resolution}
+- Update {component} to {change} for {reason}
+
+{FeatureName} Performance: {metrics} on {dataset}
+{SystemImprovement}: {description}
+All Tests Pass: {coverage} test coverage maintained, {validation} verified
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+**Example (Decision Tree Integration):**
+```
+feat: integrate decision tree predictor with service management tooling
+
+- Implement DecisionTreePredictor with 5-feature engineering (4 original + petal_area)
+- Add comprehensive test suite with 8 test cases covering initialization, prediction, and error handling
+- Register decision_tree model type in configuration and factory with proper model path resolution
+- Promote production model to registry/prd/decision_tree.joblib for Docker packaging
+- Refactor Makefile with tool-agnostic service-* targets (service-build, service-start, service-stop, service-validate)
+- Replace docker-* commands with service-* commands for cleaner developer experience
+- Fix Docker working directory to /app for consistent model path resolution
+- Update API integration tests to validate all three predictors (heuristic, decision_tree, random_forest)
+
+Model Performance: 96.0% accuracy on full iris dataset with 5 engineered features
+Service Management: New service-quick-start command for one-step build and deployment
+All Tests Pass: 95% test coverage maintained, Docker deployment verified
+```
 
 ### PR Description Template
 **Important**: Always create the PR description in a .md file first (e.g., `pr_description.md`) so the user can review it. Delete this file after the PR is created.
