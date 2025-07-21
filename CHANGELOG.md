@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.8.1 (2025-07-21)
+
+### Chores
+
+- Improve research interface and configuration management (#15)
+  ([#15](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/15),
+  [`2c290a2`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/2c290a236632965c6a969b088612b5a8ed58b422))
+
+
 ## v0.8.0 (2025-07-20)
 
 ### Features
