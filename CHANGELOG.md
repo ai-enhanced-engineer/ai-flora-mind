@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.9.0 (2025-07-21)
+
+### Features
+
+- Deploy XGBoost Predictor for Production Use (#16)
+  ([#16](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/16),
+  [`1d21794`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/1d21794149f2f96e9688387b7e08a3e2542bf724))
+
+
 ## v0.8.1 (2025-07-21)
 
 ### Chores
