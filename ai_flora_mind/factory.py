@@ -7,7 +7,13 @@ instance based on configuration settings.
 
 from ai_flora_mind.configs import ModelType, ServiceConfig
 from ai_flora_mind.logging import get_logger
-from ai_flora_mind.predictors import BasePredictor, DecisionTreePredictor, HeuristicPredictor, RandomForestPredictor
+from ai_flora_mind.predictors import (
+    BasePredictor,
+    DecisionTreePredictor,
+    HeuristicPredictor,
+    RandomForestPredictor,
+    XGBoostPredictor,
+)
 
 logger = get_logger(__name__)
 
@@ -50,10 +56,17 @@ def get_predictor(config: ServiceConfig) -> BasePredictor:
             return dt_predictor
 
         case ModelType.XGBOOST:
-            # TODO: Implement XGBoostPredictor when available
-            logger.warning("XGBoost predictor not yet implemented, falling back to Heuristic")
-            predictor = HeuristicPredictor()
-            return predictor
+            model_path = config.get_model_path()
+            if not model_path:
+                raise ValueError("XGBoost model requires a file path")
+            xgb_predictor = XGBoostPredictor(model_path=model_path)
+            logger.info(
+                "XGBoost predictor created successfully",
+                model_path=model_path,
+                n_estimators=getattr(xgb_predictor.model, "n_estimators", "unknown"),
+                max_depth=getattr(xgb_predictor.model, "max_depth", "unknown"),
+            )
+            return xgb_predictor
 
         case _:
             error_msg = f"Unsupported model type: {config.model_type}"

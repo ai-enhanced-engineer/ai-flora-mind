@@ -48,7 +48,7 @@ class ServiceConfig(BaseSettings):
     model_type: ModelType = Field(
         default=ModelType.HEURISTIC,
         description="Type of predictor model to use for iris classification",
-        alias="FLORA_MODEL_TYPE",
+        alias="FLORA_CLASSIFIER_TYPE",
     )
 
     model_config = {"env_prefix": "FLORA_", "case_sensitive": False, "extra": "ignore"}
@@ -71,7 +71,6 @@ class ServiceConfig(BaseSettings):
             case ModelType.DECISION_TREE:
                 return f"{base_path}/decision_tree.joblib"
             case ModelType.XGBOOST:
-                # TODO: Implement XGBoostPredictor
-                raise ValueError(f"Model file not configured for model type: {self.model_type.value}")
+                return f"{base_path}/xgboost.joblib"
             case _:
                 raise ValueError(f"Unknown model type: {self.model_type.value}")

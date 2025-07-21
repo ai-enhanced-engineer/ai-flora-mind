@@ -18,9 +18,9 @@ make service-start    # Start the service
 make service-stop     # Stop the service
 
 # Use different models:
-FLORA_MODEL_TYPE=heuristic make service-start
-FLORA_MODEL_TYPE=random_forest make service-start
-FLORA_MODEL_TYPE=decision_tree make service-start
+FLORA_CLASSIFIER_TYPE=heuristic make service-start
+FLORA_CLASSIFIER_TYPE=random_forest make service-start
+FLORA_CLASSIFIER_TYPE=decision_tree make service-start
 ```
 
 ### Using Docker Compose Directly
@@ -36,8 +36,8 @@ docker-compose build
 docker-compose up ai-flora-mind-service
 
 # With specific model types
-FLORA_MODEL_TYPE=random_forest docker-compose up ai-flora-mind-service
-FLORA_MODEL_TYPE=decision_tree docker-compose up ai-flora-mind-service
+FLORA_CLASSIFIER_TYPE=random_forest docker-compose up ai-flora-mind-service
+FLORA_CLASSIFIER_TYPE=decision_tree docker-compose up ai-flora-mind-service
 ```
 
 Service will be available at: `http://localhost:8000`
@@ -47,7 +47,7 @@ Service will be available at: `http://localhost:8000`
 For custom configuration, use environment variables directly:
 ```bash
 # Start development service with specific model
-FLORA_MODEL_TYPE=random_forest docker-compose up ai-flora-mind-service
+FLORA_CLASSIFIER_TYPE=random_forest docker-compose up ai-flora-mind-service
 ```
 
 ## Configuration Options
@@ -56,7 +56,7 @@ FLORA_MODEL_TYPE=random_forest docker-compose up ai-flora-mind-service
 
 | Variable | Description | Default | Options |
 |----------|-------------|---------|---------|
-| `FLORA_MODEL_TYPE` | Model type to use | `heuristic` | `heuristic`, `random_forest`, `decision_tree`, `xgboost` |
+| `FLORA_CLASSIFIER_TYPE` | Model type to use | `heuristic` | `heuristic`, `random_forest`, `decision_tree`, `xgboost` |
 
 ### Packaged Models
 
@@ -134,7 +134,7 @@ curl -X POST http://localhost:8000/predict \
   }'
 
 # Test decision tree model  
-FLORA_MODEL_TYPE=decision_tree docker run --rm -p 8000:8000 -e FLORA_MODEL_TYPE=decision_tree ai-flora-mind &
+FLORA_CLASSIFIER_TYPE=decision_tree docker run --rm -p 8000:8000 -e FLORA_CLASSIFIER_TYPE=decision_tree ai-flora-mind &
 curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
   -d '{
@@ -215,7 +215,7 @@ docker build --build-arg PYTHON_VERSION=3.13 -t ai-flora-mind .
 
 # Run manually with environment variables
 docker run -p 8000:8000 \
-  -e FLORA_MODEL_TYPE=random_forest \
+  -e FLORA_CLASSIFIER_TYPE=random_forest \
   -v $(pwd)/research/models:/app/research/models:ro \
   ai-flora-mind
 ```

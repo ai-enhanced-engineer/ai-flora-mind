@@ -5,10 +5,8 @@ Implements a machine learning predictor using pre-trained Decision Tree models
 with minimal feature engineering for maximum interpretability.
 """
 
-from pathlib import Path
 from typing import Any
 
-import joblib
 import numpy as np
 from pydantic import validate_call
 
@@ -34,7 +32,7 @@ class DecisionTreePredictor(BasePredictor):
 
     def __init__(self, model_path: str = "research/models/decision_tree_comprehensive_2025_07_19_233107.joblib"):
         super().__init__(model_path=model_path)
-        self.model = self._load_model()
+        self.model = self._load_model(model_path)
 
         logger.info(
             "DecisionTreePredictor initialized",
@@ -43,29 +41,6 @@ class DecisionTreePredictor(BasePredictor):
             max_depth=getattr(self.model, "max_depth", "unknown"),
             features_expected=5,  # 4 original + petal_area
         )
-
-    def _load_model(self) -> Any:
-        model_path = Path(self.model_path)
-
-        if not model_path.exists():
-            error_msg = f"Model file not found: {self.model_path}"
-            logger.error("Model loading failed", error=error_msg, model_path=str(model_path))
-            raise FileNotFoundError(error_msg)
-
-        try:
-            model = joblib.load(model_path)
-            logger.info(
-                "Model loaded successfully",
-                model_path=str(model_path),
-                file_size=model_path.stat().st_size,
-                model_class=model.__class__.__name__,
-            )
-            return model
-
-        except Exception as e:
-            error_msg = f"Failed to load model from {self.model_path}: {str(e)}"
-            logger.error("Model loading error", error=error_msg, exception_type=type(e).__name__)
-            raise RuntimeError(error_msg) from e
 
     def _prepare_features(self, measurements: IrisMeasurements) -> np.ndarray[Any, Any]:
         """

@@ -17,21 +17,21 @@ def test__service_config__default_model_type_is_heuristic() -> None:
 
 @pytest.mark.unit
 def test__service_config__environment_variable_override(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("FLORA_MODEL_TYPE", "random_forest")
+    monkeypatch.setenv("FLORA_CLASSIFIER_TYPE", "random_forest")
     config = ServiceConfig()
     assert config.model_type == ModelType.RANDOM_FOREST
 
 
 @pytest.mark.unit
 def test__service_config__case_insensitive_environment_variables(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("flora_model_type", "random_forest")
+    monkeypatch.setenv("flora_classifier_type", "random_forest")
     config = ServiceConfig()
     assert config.model_type == ModelType.RANDOM_FOREST
 
 
 @pytest.mark.unit
 def test__service_config__extra_environment_variables_ignored(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("FLORA_MODEL_TYPE", "heuristic")
+    monkeypatch.setenv("FLORA_CLASSIFIER_TYPE", "heuristic")
     monkeypatch.setenv("FLORA_UNKNOWN_VAR", "should_be_ignored")
     config = ServiceConfig()
     assert config.model_type == ModelType.HEURISTIC
@@ -45,7 +45,7 @@ def test__service_config__get_model_path_heuristic_returns_none() -> None:
 
 @pytest.mark.unit
 def test__service_config__get_model_path_random_forest_returns_consistent_path(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("FLORA_MODEL_TYPE", "random_forest")
+    monkeypatch.setenv("FLORA_CLASSIFIER_TYPE", "random_forest")
     config = ServiceConfig()
 
     model_path = config.get_model_path()
@@ -53,26 +53,9 @@ def test__service_config__get_model_path_random_forest_returns_consistent_path(m
 
 
 @pytest.mark.unit
-@pytest.mark.parametrize(
-    "model_type,expected_error",
-    [
-        ("xgboost", "Model file not configured for model type: xgboost"),
-    ],
-)
-def test__service_config__get_model_path_unimplemented_models_raise_error(
-    monkeypatch: pytest.MonkeyPatch, model_type: str, expected_error: str
-) -> None:
-    monkeypatch.setenv("FLORA_MODEL_TYPE", model_type)
-    config = ServiceConfig()
-
-    with pytest.raises(ValueError, match=expected_error):
-        config.get_model_path()
-
-
-@pytest.mark.unit
 def test__service_config__environment_prefix_handling(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("FLORA_MODEL_TYPE", "random_forest")
-    monkeypatch.setenv("OTHER_MODEL_TYPE", "should_be_ignored")
+    monkeypatch.setenv("FLORA_CLASSIFIER_TYPE", "random_forest")
+    monkeypatch.setenv("OTHER_CLASSIFIER_TYPE", "should_be_ignored")
 
     config = ServiceConfig()
     assert config.model_type == ModelType.RANDOM_FOREST
@@ -80,7 +63,7 @@ def test__service_config__environment_prefix_handling(monkeypatch: pytest.Monkey
 
 @pytest.mark.unit
 def test__service_config__get_model_path_decision_tree_returns_consistent_path(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("FLORA_MODEL_TYPE", "decision_tree")
+    monkeypatch.setenv("FLORA_CLASSIFIER_TYPE", "decision_tree")
     config = ServiceConfig()
 
     model_path = config.get_model_path()
@@ -88,13 +71,9 @@ def test__service_config__get_model_path_decision_tree_returns_consistent_path(m
 
 
 @pytest.mark.unit
-def test__service_config__error_message_includes_model_type(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("FLORA_MODEL_TYPE", "xgboost")
+def test__service_config__xgboost_model_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("FLORA_CLASSIFIER_TYPE", "xgboost")
     config = ServiceConfig()
 
-    with pytest.raises(ValueError) as exc_info:
-        config.get_model_path()
-
-    error_message = str(exc_info.value)
-    assert "xgboost" in error_message
-    assert "Model file not configured" in error_message
+    model_path = config.get_model_path()
+    assert model_path == "registry/prd/xgboost.joblib"

@@ -41,13 +41,13 @@ if __name__ == "__main__":
 
     # Override model configuration if provided
     if args.model_type:
-        os.environ["FLORA_MODEL_TYPE"] = args.model_type
+        os.environ["FLORA_CLASSIFIER_TYPE"] = args.model_type
         print(f"Model type set to: {args.model_type}")
 
     print(f"Starting AI Flora Mind API on {args.host}:{args.port}")
     print(f"Environment: {os.environ.get('ENVIRONMENT', 'development')}")
     print(f"Logging level: {os.environ.get('LOGGING_LEVEL', 'INFO')}")
-    print(f"Model type: {os.environ.get('FLORA_MODEL_TYPE', 'heuristic')}")
+    print(f"Model type: {os.environ.get('FLORA_CLASSIFIER_TYPE', 'heuristic')}")
     print("API Documentation: http://localhost:8000/docs")
     print("Health check: http://localhost:8000/health")
     print("Example prediction test:")

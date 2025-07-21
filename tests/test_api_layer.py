@@ -13,7 +13,7 @@ from ai_flora_mind.server.schemas import IrisPredictionResponse
 
 
 @pytest_asyncio.fixture(
-    scope="function", params=[ModelType.HEURISTIC, ModelType.RANDOM_FOREST, ModelType.DECISION_TREE]
+    scope="function", params=[ModelType.HEURISTIC, ModelType.RANDOM_FOREST, ModelType.DECISION_TREE, ModelType.XGBOOST]
 )
 async def async_client(
     request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch
@@ -21,7 +21,7 @@ async def async_client(
     model_type: ModelType = request.param
 
     # Set environment variable for model type
-    monkeypatch.setenv("FLORA_MODEL_TYPE", model_type.value)
+    monkeypatch.setenv("FLORA_CLASSIFIER_TYPE", model_type.value)
 
     from ai_flora_mind.server.main import get_app
 
@@ -32,7 +32,7 @@ async def async_client(
 
 @pytest_asyncio.fixture(scope="function")
 async def async_client_heuristic(monkeypatch: pytest.MonkeyPatch) -> AsyncGenerator[AsyncClient, None]:
-    monkeypatch.setenv("FLORA_MODEL_TYPE", ModelType.HEURISTIC.value)
+    monkeypatch.setenv("FLORA_CLASSIFIER_TYPE", ModelType.HEURISTIC.value)
 
     from ai_flora_mind.server.main import get_app
 

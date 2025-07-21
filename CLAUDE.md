@@ -21,15 +21,15 @@ Complete development guide consolidating essential information for efficient dev
 - **Start service**: `make service-start` (starts API at http://localhost:8000)
 - **Stop service**: `make service-stop` (stops running service)
 - **Quick start**: `make service-quick-start` (build + start in one command)
-- **Model selection**: `FLORA_MODEL_TYPE=<type> make service-start`
+- **Model selection**: `FLORA_CLASSIFIER_TYPE=<type> make service-start`
   - Available types: `heuristic`, `decision_tree`, `random_forest`, `xgboost`
 
 ### API Development
 - **Start API locally**: `make api-dev` (with auto-reload)
-  - `FLORA_MODEL_TYPE=heuristic make api-dev` - Rule-based classifier
-  - `FLORA_MODEL_TYPE=decision_tree make api-dev` - Decision tree (96% accuracy)
-  - `FLORA_MODEL_TYPE=random_forest make api-dev` - Random forest (96% accuracy)
-  - `FLORA_MODEL_TYPE=xgboost make api-dev` - XGBoost (not implemented)
+  - `FLORA_CLASSIFIER_TYPE=heuristic make api-dev` - Rule-based classifier
+  - `FLORA_CLASSIFIER_TYPE=decision_tree make api-dev` - Decision tree (96% accuracy)
+  - `FLORA_CLASSIFIER_TYPE=random_forest make api-dev` - Random forest (96% accuracy)
+  - `FLORA_CLASSIFIER_TYPE=xgboost make api-dev` - XGBoost (not implemented)
   - `make api-dev ARGS='--model-type decision_tree --log-level debug'` - CLI arguments
   - `make api-dev ARGS='--port 8001 --host localhost'` - Custom port/host
 - **Validate API**: `make api-validate` (run comprehensive tests)
@@ -481,7 +481,7 @@ make all-test-validate-branch  # Must pass 90% coverage
 - **Verification**: Build and test Docker image
 ```bash
 docker build -t ai-flora-mind:test .
-FLORA_MODEL_TYPE=new_algorithm docker run --rm ai-flora-mind:test
+FLORA_CLASSIFIER_TYPE=new_algorithm docker run --rm ai-flora-mind:test
 ```
 
 ### Phase 7: Documentation and Deployment
@@ -492,7 +492,7 @@ FLORA_MODEL_TYPE=new_algorithm docker run --rm ai-flora-mind:test
 ```yaml
 environment:
   # Options: heuristic, random_forest, new_algorithm
-  - FLORA_MODEL_TYPE=${FLORA_MODEL_TYPE:-heuristic}
+  - FLORA_CLASSIFIER_TYPE=${FLORA_CLASSIFIER_TYPE:-heuristic}
 ```
 
 #### 7.2 Update CLI Tools
@@ -528,7 +528,7 @@ feat: integrate {AlgorithmName} predictor with production registry
 - Register {algorithm_name} model type in configuration and factory
 - Promote trained model to registry/prd/{algorithm_name}.joblib
 - Update API integration tests to include {algorithm_name} model type
-- Verify service deployment with `FLORA_MODEL_TYPE={algorithm_name} make service-start`
+- Verify service deployment with `FLORA_CLASSIFIER_TYPE={algorithm_name} make service-start`
 
 Model Performance: {accuracy}% accuracy on test set
 Production Ready: All tests pass, Docker verified, documentation updated

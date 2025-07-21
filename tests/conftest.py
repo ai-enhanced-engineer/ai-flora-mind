@@ -9,7 +9,7 @@ from typing import List, Tuple
 import pytest
 
 from ai_flora_mind.configs import IrisMeasurements
-from ai_flora_mind.predictors import DecisionTreePredictor, HeuristicPredictor, RandomForestPredictor
+from ai_flora_mind.predictors import DecisionTreePredictor, HeuristicPredictor, RandomForestPredictor, XGBoostPredictor
 
 
 @pytest.fixture
@@ -25,6 +25,11 @@ def random_forest_predictor() -> RandomForestPredictor:
 @pytest.fixture
 def decision_tree_predictor() -> DecisionTreePredictor:
     return DecisionTreePredictor()
+
+
+@pytest.fixture
+def xgboost_predictor() -> XGBoostPredictor:
+    return XGBoostPredictor()
 
 
 @pytest.fixture
@@ -61,6 +66,39 @@ def temp_decision_tree_model_path(tmp_path):
     joblib.dump(model, temp_model_file)
 
     return str(temp_model_file)
+
+
+@pytest.fixture
+def temp_xgboost_model_path(tmp_path):
+    import joblib
+    import numpy as np
+
+    try:
+        import xgboost as xgb
+
+        model = xgb.XGBClassifier(n_estimators=100, max_depth=3, random_state=42)
+        # 9 features to match XGBoost feature engineering
+        X_dummy = np.random.rand(10, 9)
+        y_dummy = [0, 0, 0, 1, 1, 1, 2, 2, 2, 2]  # Numeric labels for XGBoost
+        model.fit(X_dummy, y_dummy)
+
+        temp_model_file = tmp_path / "test_xgboost_model.joblib"
+        joblib.dump(model, temp_model_file)
+
+        return str(temp_model_file)
+    except ImportError:
+        # If xgboost not installed, create a simple mock that behaves like XGBoost
+        from sklearn.tree import DecisionTreeClassifier
+
+        model = DecisionTreeClassifier(max_depth=3, random_state=42)
+        X_dummy = np.random.rand(10, 9)
+        y_dummy = [0, 0, 0, 1, 1, 1, 2, 2, 2, 2]
+        model.fit(X_dummy, y_dummy)
+
+        temp_model_file = tmp_path / "test_xgboost_model.joblib"
+        joblib.dump(model, temp_model_file)
+
+        return str(temp_model_file)
 
 
 @pytest.fixture
