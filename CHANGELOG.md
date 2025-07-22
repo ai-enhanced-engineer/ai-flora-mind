@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.9.1 (2025-07-22)
+
+### Research
+
+- Introduce Robust Model Comparison and Enhanced Result Processing (#17)
+  ([#17](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/17),
+  [`673ab39`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/673ab3919ea1d19d42f6658b7c3098729f251cb1))
+
+
 ## v0.9.0 (2025-07-21)
 
 ### Features
