@@ -31,49 +31,49 @@ eval-heuristic: environment-sync ## Evaluate rule-based heuristic classifier on 
 train-decision-tree: environment-sync ## Train decision tree with train/test split (original experiment)
 	@echo "🌳 Training Decision Tree Iris Classifier (Split Experiment)..."
 	@echo "📊 Running model training and evaluation..."
-	uv run python -m research.experiments.decision_tree.iris_decision_tree_classifier --experiment split
+	uv run python -m research.experiments.decision_tree.split
 	$(GREEN_LINE)
 
 train-decision-tree-comprehensive: environment-sync ## Train decision tree with comprehensive validation (full dataset + LOOCV + repeated k-fold)
 	@echo "🌳 Training Decision Tree Iris Classifier (Comprehensive Validation)..."
 	@echo "📊 Running comprehensive validation with LOOCV and repeated k-fold CV..."
-	uv run python -m research.experiments.decision_tree.iris_decision_tree_classifier --experiment comprehensive
+	uv run python -m research.experiments.decision_tree.comprehensive
 	$(GREEN_LINE)
 
 train-random-forest: environment-sync ## Train Random Forest with train/test split (targeting 98-99% accuracy)
 	@echo "🌲 Training Random Forest Iris Classifier (Split Experiment)..."
 	@echo "📊 Running ensemble learning with all 14 features..."
-	uv run python -m research.experiments.random_forest.iris_random_forest_classifier --experiment split
+	uv run python -m research.experiments.random_forest.split
 	$(GREEN_LINE)
 
 train-random-forest-comprehensive: environment-sync ## Train Random Forest with comprehensive validation (full dataset + LOOCV + repeated k-fold)
 	@echo "🌲 Training Random Forest Iris Classifier (Comprehensive Validation)..."
 	@echo "📊 Running comprehensive validation with LOOCV and repeated k-fold CV..."
-	uv run python -m research.experiments.random_forest.iris_random_forest_classifier --experiment comprehensive
+	uv run python -m research.experiments.random_forest.comprehensive
 	$(GREEN_LINE)
 
 train-random-forest-regularized: environment-sync ## Train Random Forest with regularized configuration to prevent overfitting
 	@echo "🌲 Training Random Forest Iris Classifier (Regularized Configuration)..."
 	@echo "📊 Running overfitting-prevention experiment with depth limits and reduced trees..."
-	uv run python -m research.experiments.random_forest.iris_random_forest_classifier --experiment regularized
+	uv run python -m research.experiments.random_forest.regularized
 	$(GREEN_LINE)
 
 train-xgboost: environment-sync ## Train XGBoost with train/test split (targeting theoretical maximum 98-99.5% accuracy)
 	@echo "🚀 Training XGBoost Iris Classifier (Split Experiment)..."
 	@echo "📊 Running gradient boosting with targeted high-discriminative features..."
-	uv run python -m research.experiments.xgboost.iris_xgboost_classifier --experiment split
+	uv run python -m research.experiments.xgboost.split
 	$(GREEN_LINE)
 
 train-xgboost-comprehensive: environment-sync ## Train XGBoost with comprehensive validation (full dataset + LOOCV)
 	@echo "🚀 Training XGBoost Iris Classifier (Comprehensive Validation)..."
 	@echo "📊 Running comprehensive validation with overfitting monitoring..."
-	uv run python -m research.experiments.xgboost.iris_xgboost_classifier --experiment comprehensive
+	uv run python -m research.experiments.xgboost.comprehensive
 	$(GREEN_LINE)
 
 train-xgboost-optimized: environment-sync ## Train XGBoost with optimized hyperparameters and overfitting prevention
 	@echo "🚀 Training XGBoost Iris Classifier (Optimized Configuration)..."
 	@echo "📊 Running theoretical performance ceiling experiment with aggressive regularization..."
-	uv run python -m research.experiments.xgboost.iris_xgboost_classifier --experiment optimized
+	uv run python -m research.experiments.xgboost.optimized
 	$(GREEN_LINE)
 
 run-all-experiments: ## Run all iris classifier experiments in sequence

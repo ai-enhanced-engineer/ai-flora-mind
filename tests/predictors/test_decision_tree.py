@@ -19,7 +19,7 @@ from ai_flora_mind.predictors import BasePredictor, DecisionTreePredictor
 def test__decision_tree_predictor__initialization_default_model() -> None:
     predictor = DecisionTreePredictor()
 
-    assert predictor.model_path == "research/models/decision_tree_comprehensive_2025_07_19_233107.joblib"
+    assert predictor.model_path == "registry/prd/decision_tree.joblib"
     assert predictor.model is not None
     assert hasattr(predictor.model, "predict")
 

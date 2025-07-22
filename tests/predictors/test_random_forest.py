@@ -19,7 +19,7 @@ from ai_flora_mind.predictors import BasePredictor, RandomForestPredictor
 def test__random_forest_predictor__initialization_default_model() -> None:
     predictor = RandomForestPredictor()
 
-    assert predictor.model_path == "research/models/random_forest_regularized_2025_07_19_234849.joblib"
+    assert predictor.model_path == "registry/prd/random_forest.joblib"
     assert predictor.model is not None
     assert hasattr(predictor.model, "predict")
 

@@ -30,7 +30,7 @@ class XGBoostPredictor(BasePredictor):
     model_path: str
     model: Any = None  # Will hold the loaded XGBoost model
 
-    def __init__(self, model_path: str = "research/models/xgboost_optimized_2025_07_20_005952.joblib"):
+    def __init__(self, model_path: str = "registry/prd/xgboost.joblib"):
         super().__init__(model_path=model_path)
         self.model = self._load_model(model_path)
 

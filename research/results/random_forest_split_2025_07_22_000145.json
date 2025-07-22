@@ -1,0 +1,151 @@
+{
+  "overall_accuracy": 0.9333333333333333,
+  "per_class_accuracy": {
+    "setosa": 1.0,
+    "versicolor": 0.9333333333333333,
+    "virginica": 0.8666666666666667
+  },
+  "classification_report": {
+    "setosa": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 15.0
+    },
+    "versicolor": {
+      "precision": 0.875,
+      "recall": 0.9333333333333333,
+      "f1-score": 0.9032258064516129,
+      "support": 15.0
+    },
+    "virginica": {
+      "precision": 0.9285714285714286,
+      "recall": 0.8666666666666667,
+      "f1-score": 0.896551724137931,
+      "support": 15.0
+    },
+    "accuracy": 0.9333333333333333,
+    "macro avg": {
+      "precision": 0.9345238095238096,
+      "recall": 0.9333333333333332,
+      "f1-score": 0.9332591768631814,
+      "support": 45.0
+    },
+    "weighted avg": {
+      "precision": 0.9345238095238095,
+      "recall": 0.9333333333333333,
+      "f1-score": 0.9332591768631814,
+      "support": 45.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      15,
+      0,
+      0
+    ],
+    [
+      0,
+      14,
+      1
+    ],
+    [
+      0,
+      2,
+      13
+    ]
+  ],
+  "misclassifications": [
+    {
+      "index": 2,
+      "true_species": "virginica",
+      "predicted_species": "versicolor",
+      "petal_length": 5.1,
+      "petal_width": 1.5,
+      "sepal_length": 6.3,
+      "sepal_width": 2.8
+    },
+    {
+      "index": 30,
+      "true_species": "virginica",
+      "predicted_species": "versicolor",
+      "petal_length": 5.6,
+      "petal_width": 1.4,
+      "sepal_length": 6.1,
+      "sepal_width": 2.6
+    },
+    {
+      "index": 39,
+      "true_species": "versicolor",
+      "predicted_species": "virginica",
+      "petal_length": 5.0,
+      "petal_width": 1.7,
+      "sepal_length": 6.7,
+      "sepal_width": 3.0
+    }
+  ],
+  "total_samples": 45,
+  "correct_predictions": 42,
+  "experiment_metadata": {
+    "experiment_name": "random_forest_split",
+    "timestamp": "2025-07-22T00:01:44.713998",
+    "model_type": "iris_classifier",
+    "approach": "baseline"
+  },
+  "performance_metrics": {
+    "overall_accuracy": 0.9333333333333333,
+    "total_samples": 45,
+    "correct_predictions": 42,
+    "misclassification_count": 3
+  },
+  "algorithm_details": {
+    "experiment_type": "split",
+    "n_estimators": 200,
+    "features_used": [
+      "sepal length (cm)",
+      "sepal width (cm)",
+      "petal length (cm)",
+      "petal width (cm)",
+      "petal_area",
+      "sepal_area",
+      "petal_aspect_ratio",
+      "sepal_aspect_ratio",
+      "total_area",
+      "area_ratio",
+      "is_likely_setosa",
+      "petal_to_sepal_length_ratio",
+      "petal_to_sepal_width_ratio",
+      "size_index"
+    ],
+    "feature_importance": {
+      "area_ratio": 0.15179947028187757,
+      "petal_area": 0.1411121398912377,
+      "petal length (cm)": 0.13260291721662767,
+      "petal_to_sepal_length_ratio": 0.11738360693587123,
+      "petal_to_sepal_width_ratio": 0.11425107382348317,
+      "petal width (cm)": 0.10556110508677116,
+      "size_index": 0.06225185964124541,
+      "is_likely_setosa": 0.06202744275943887,
+      "sepal_aspect_ratio": 0.04304086454494531,
+      "total_area": 0.026343410199118924,
+      "petal_aspect_ratio": 0.02074256237715173,
+      "sepal length (cm)": 0.01540608175355371,
+      "sepal_area": 0.005721527456768912,
+      "sepal width (cm)": 0.0017559380319086266
+    },
+    "training_samples": 105,
+    "test_samples": 45,
+    "training_accuracy": 1.0
+  },
+  "cross_validation": {
+    "cv_scores": [
+      1.0,
+      0.9666666666666667,
+      0.9333333333333333,
+      0.9333333333333333,
+      1.0
+    ],
+    "cv_mean": 0.9666666666666668,
+    "cv_std": 0.029814239699997188
+  }
+}

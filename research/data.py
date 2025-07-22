@@ -20,7 +20,7 @@ def load_iris_data() -> Tuple[np.ndarray[Any, Any], np.ndarray[Any, Any], Bunch]
 
     iris = load_iris()
     X = iris.data
-    y = iris.target_names[iris.target]  # Convert to species names
+    y = iris.target  # Keep numeric targets (0, 1, 2)
 
     logger.info(
         "Dataset loaded successfully",

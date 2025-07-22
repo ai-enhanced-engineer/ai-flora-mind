@@ -15,11 +15,17 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from sklearn.utils import Bunch
 
 from ai_flora_mind.logging import get_logger
+from research.experiments.constants import RESULTS_DIR
 
 logger = get_logger(__name__)
 
 
-def evaluate_model(y_true: np.ndarray[Any, Any], y_pred: np.ndarray[Any, Any], iris_data: Bunch) -> Dict[str, Any]:
+def evaluate_model(
+    y_true: np.ndarray[Any, Any],
+    y_pred: np.ndarray[Any, Any],
+    iris_data: Bunch,
+    X_subset: np.ndarray[Any, Any] | None = None,
+) -> Dict[str, Any]:
     logger.info("Step 4: Evaluating model performance")
 
     # Calculate performance metrics
@@ -36,14 +42,14 @@ def evaluate_model(y_true: np.ndarray[Any, Any], y_pred: np.ndarray[Any, Any], i
     class_report = classification_report(y_true, y_pred, target_names=iris_data.target_names, output_dict=True)
 
     # Generate confusion matrix
-    conf_matrix = confusion_matrix(y_true, y_pred, labels=iris_data.target_names)
+    conf_matrix = confusion_matrix(y_true, y_pred)
 
     # Calculate per-class accuracy
     per_class_accuracy = {}
-    for species in iris_data.target_names:
-        species_mask = y_true == species
+    for i, species in enumerate(iris_data.target_names):
+        species_mask = y_true == i  # Use numeric index
         species_predictions = y_pred[species_mask]
-        species_accuracy = accuracy_score([species] * len(species_predictions), species_predictions)
+        species_accuracy = accuracy_score([i] * len(species_predictions), species_predictions)
         per_class_accuracy[species] = species_accuracy
 
     # Analyze misclassifications
@@ -56,12 +62,13 @@ def evaluate_model(y_true: np.ndarray[Any, Any], y_pred: np.ndarray[Any, Any], i
     )
 
     misclassifications = []
-    X = iris_data.data  # Get original features for misclassification analysis
+    # Use subset features if provided (for split experiments), otherwise use full dataset
+    X = X_subset if X_subset is not None else iris_data.data
     for idx in misclassified_indices:
         misc_data = {
             "index": idx,
-            "true_species": y_true[idx],
-            "predicted_species": y_pred[idx],
+            "true_species": iris_data.target_names[y_true[idx]],
+            "predicted_species": iris_data.target_names[y_pred[idx]],
             "petal_length": X[idx, 2],
             "petal_width": X[idx, 3],
             "sepal_length": X[idx, 0],
@@ -104,13 +111,22 @@ def log_performance_summary(results: Dict[str, Any], experiment_name: str) -> No
     """Comprehensive performance logging with EDA validation and target accuracy assessment."""
     logger.info("Generating performance summary")
 
-    # Log overall performance metrics
+    # Log overall performance metrics - check both new and legacy locations
+    if "performance_metrics" in results:
+        total_samples = results["performance_metrics"]["total_samples"]
+        correct_predictions = results["performance_metrics"]["correct_predictions"]
+        overall_accuracy = results["performance_metrics"]["overall_accuracy"]
+    else:
+        total_samples = results["total_samples"]
+        correct_predictions = results["correct_predictions"]
+        overall_accuracy = results["overall_accuracy"]
+
     logger.info(
         "Overall performance summary",
-        total_samples=results["total_samples"],
-        correct_predictions=results["correct_predictions"],
-        overall_accuracy=f"{results['overall_accuracy']:.3f}",
-        accuracy_percentage=f"{results['overall_accuracy'] * 100:.1f}%",
+        total_samples=total_samples,
+        correct_predictions=correct_predictions,
+        overall_accuracy=f"{overall_accuracy:.3f}",
+        accuracy_percentage=f"{overall_accuracy * 100:.1f}%",
     )
 
     # Log per-class accuracy
@@ -166,7 +182,7 @@ def log_performance_summary(results: Dict[str, Any], experiment_name: str) -> No
 
     # Log key insights and validation
     setosa_acc = results["per_class_accuracy"]["setosa"]
-    overall_acc = results["overall_accuracy"]
+    overall_acc = overall_accuracy  # Use the variable we already resolved above
 
     if setosa_acc == 1.0:
         logger.info(
@@ -203,9 +219,8 @@ def log_performance_summary(results: Dict[str, Any], experiment_name: str) -> No
 
 
 def _save_results_to_json(results: Dict[str, Any], experiment_name: str) -> None:
-    # Create results directory if it doesn't exist
-    results_dir = Path(__file__).parent / "results"
-    results_dir.mkdir(exist_ok=True)
+    # Use centralized results directory
+    results_dir = Path(RESULTS_DIR)
 
     # Generate timestamp-based filename
     timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S")
@@ -221,10 +236,18 @@ def _save_results_to_json(results: Dict[str, Any], experiment_name: str) -> None
             "approach": "baseline",
         },
         "performance_metrics": {
-            "overall_accuracy": float(results["overall_accuracy"]),
-            "total_samples": int(results["total_samples"]),
-            "correct_predictions": int(results["correct_predictions"]),
-            "misclassification_count": len(results["misclassifications"]),
+            "overall_accuracy": float(results["performance_metrics"]["overall_accuracy"])
+            if "performance_metrics" in results
+            else float(results["overall_accuracy"]),
+            "total_samples": int(results["performance_metrics"]["total_samples"])
+            if "performance_metrics" in results
+            else int(results["total_samples"]),
+            "correct_predictions": int(results["performance_metrics"]["correct_predictions"])
+            if "performance_metrics" in results
+            else int(results["correct_predictions"]),
+            "misclassification_count": int(results["performance_metrics"]["misclassification_count"])
+            if "performance_metrics" in results and "misclassification_count" in results["performance_metrics"]
+            else len(results["misclassifications"]),
         },
         "per_class_accuracy": {species: float(accuracy) for species, accuracy in results["per_class_accuracy"].items()},
         "confusion_matrix": results["confusion_matrix"].tolist()

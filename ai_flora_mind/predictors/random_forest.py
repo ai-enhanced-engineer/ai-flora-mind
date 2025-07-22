@@ -30,7 +30,7 @@ class RandomForestPredictor(BasePredictor):
     model_path: str
     model: Any = None  # Will hold the loaded sklearn model
 
-    def __init__(self, model_path: str = "research/models/random_forest_regularized_2025_07_19_234849.joblib"):
+    def __init__(self, model_path: str = "registry/prd/random_forest.joblib"):
         super().__init__(model_path=model_path)
         self.model = self._load_model(model_path)
 

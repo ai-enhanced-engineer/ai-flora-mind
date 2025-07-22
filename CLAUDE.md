@@ -41,6 +41,17 @@ Complete development guide consolidating essential information for efficient dev
 - `make integration-test` - Integration tests (requires external dependencies)
 - `make all-test` - All tests + coverage
 
+### Research Experiments
+- `make eval-heuristic` - Rule-based baseline (96% accuracy)
+- `make train-decision-tree` - Decision tree split experiment
+- `make train-decision-tree-comprehensive` - Decision tree with LOOCV
+- `make train-random-forest` - Random forest split experiment
+- `make train-random-forest-comprehensive` - Random forest with OOB + LOOCV
+- `make train-random-forest-regularized` - Production-optimized random forest
+- `make train-xgboost` - XGBoost baseline experiment
+- `make train-xgboost-comprehensive` - XGBoost with LOOCV validation
+- `make train-xgboost-optimized` - XGBoost with heavy regularization
+
 ## Architecture Overview
 
 ### Design Principles
@@ -560,3 +571,164 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - **Resource Usage**: Memory and CPU consumption per model type
 
 This integration process ensures consistent, testable, and maintainable predictor additions to the AI Flora Mind system.
+
+## Research Experiment Documentation Template
+
+### Experiment Organization
+
+Experiments should be organized in folders with numeric prefixes to indicate progression/complexity:
+- `1_baseline_approach/` - Simplest baseline
+- `2_intermediate_method/` - More complex approach
+- `3_advanced_technique/` - Even more sophisticated
+- `4_state_of_art/` - Most complex approach
+
+Each folder contains an `EXPERIMENT.md` file documenting the experimental findings.
+
+### EXPERIMENT.md Structure
+
+A project-agnostic template for documenting scientific experiments with clarity and minimal repetition.
+
+```markdown
+# [Experiment Title]
+
+## Executive Summary
+
+[2-3 sentences capturing the key insight and outcome. Focus on what was learned, not just results.]
+
+**Key Results**:
+- [Variant/Config A]: [primary metric] ([key finding])
+- [Variant/Config B]: [primary metric] ([key finding])
+- [Variant/Config C]: [primary metric] ([key finding])
+
+## Experimental Design
+
+### Objective
+[1-2 sentences stating what the experiment aims to validate, discover, or measure]
+
+### Methodology
+- **Approach**: [Brief description of method/algorithm]
+- **Variables**: [What is being varied/tested]
+- **Controls**: [What is kept constant]
+
+### Evaluation Strategy
+- **Metrics**: [Primary and secondary metrics]
+- **Validation**: [How results are validated]
+- **Baseline**: [What results are compared against]
+
+---
+
+## Experiment 1: [Descriptive Name]
+
+### Setup
+- **Configuration**: [Key parameters and settings]
+- **Data/Input**: [What data or inputs were used]
+- **Environment**: [Relevant conditions]
+
+### Results
+- **Primary Metric**: [value] ([interpretation])
+- **Secondary Metrics**: [values]
+- **Statistical Significance**: [if applicable]
+
+### [Key Visualization/Table]
+```
+[Actual data in easy-to-read format]
+[e.g., confusion matrix, performance table, graph data]
+```
+
+**Finding**: [Single sentence key takeaway from this experiment]
+
+---
+
+## Experiment 2: [Descriptive Name]
+
+### Setup
+[What changed from Experiment 1]
+
+### Results
+[Same structure as Experiment 1]
+
+### Key Discovery
+**[Bold statement of main finding]**: [Explanation with specific numbers and context]
+
+### [Delta Analysis]
+[Show what changed from previous experiment and why it matters]
+
+---
+
+## Experiment N: [Descriptive Name]
+
+### Optimization/Changes Applied
+```
+[Show specific changes in configuration/approach]
+[Can be code, parameters, or methodology]
+```
+
+### Results
+[Focus on improvements or differences]
+
+### Impact
+[Quantify the effect of changes]
+
+---
+
+## Comparative Analysis
+
+### Performance Evolution
+| Metric | Exp 1 | Exp 2 | ... | Exp N | Total Change |
+|--------|-------|-------|-----|-------|--------------|
+| [Metric 1] | [val] | [val] | ... | [val] | [+/-X%] |
+| [Metric 2] | [val] | [val] | ... | [val] | [+/-X%] |
+
+### [Pattern Analysis]
+[Describe patterns observed across experiments with specific evidence]
+
+### Statistical Summary
+[If applicable: confidence intervals, p-values, effect sizes]
+
+---
+
+## Conclusions
+
+1. **[Primary Finding]**: [Specific statement with quantitative support]
+
+2. **[Secondary Finding]**: [Specific statement with quantitative support]
+
+3. **[Methodological Insight]**: [What was learned about the approach itself]
+
+4. **[Practical Implication]**: [How results can be applied]
+
+5. **[Limitations/Future Work]**: [What wasn't answered or could be improved]
+```
+
+### Key Principles for EXPERIMENT.md Files
+
+1. **No Technical Implementation Details**
+   - No file paths, make targets, or .joblib references
+   - No production deployment instructions
+   - Focus on scientific findings only
+
+2. **Eliminate Repetition**
+   - Each section adds new information
+   - No redundant summaries or transitions
+   - Conclusions synthesize, not repeat
+
+3. **Be Concrete**
+   - Use specific numbers, not vague statements
+   - Show actual confusion matrices and results
+   - Include exact configuration parameters
+
+4. **Progressive Narrative**
+   - Each experiment builds on previous findings
+   - Show evolution of understanding
+   - End with actionable insights
+
+5. **Meaningful Sections Only**
+   - Every section must add value
+   - Remove boilerplate or filler content
+   - Keep focus on experimental science
+
+6. **Length Target**
+   - Aim for 100-150 lines total
+   - Executive Summary: 5-10 lines
+   - Each Experiment: 15-25 lines
+   - Conclusions: 10-15 lines

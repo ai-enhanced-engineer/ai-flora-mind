@@ -21,7 +21,7 @@ from ai_flora_mind.predictors import BasePredictor, XGBoostPredictor
 def test__xgboost_predictor__initialization_default_model() -> None:
     predictor = XGBoostPredictor()
 
-    assert predictor.model_path == "research/models/xgboost_optimized_2025_07_20_005952.joblib"
+    assert predictor.model_path == "registry/prd/xgboost.joblib"
     assert predictor.model is not None
     assert hasattr(predictor.model, "predict")
 

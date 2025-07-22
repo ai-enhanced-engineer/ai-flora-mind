@@ -227,8 +227,5 @@ $RECYCLE.BIN/
 
 # AI Flora Mind specific
 memory_store/
-results/
-data/
 logs/
-experiments/
 .deepeval/

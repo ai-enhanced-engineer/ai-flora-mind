@@ -60,35 +60,35 @@
       "index": 2,
       "true_species": "virginica",
       "predicted_species": "versicolor",
-      "petal_length": 1.3,
-      "petal_width": 0.2,
-      "sepal_length": 4.7,
-      "sepal_width": 3.2
+      "petal_length": 5.1,
+      "petal_width": 1.5,
+      "sepal_length": 6.3,
+      "sepal_width": 2.8
     },
     {
       "index": 24,
       "true_species": "virginica",
       "predicted_species": "versicolor",
-      "petal_length": 1.9,
-      "petal_width": 0.2,
-      "sepal_length": 4.8,
-      "sepal_width": 3.4
+      "petal_length": 4.8,
+      "petal_width": 1.8,
+      "sepal_length": 6.0,
+      "sepal_width": 3.0
     },
     {
       "index": 30,
       "true_species": "virginica",
       "predicted_species": "versicolor",
-      "petal_length": 1.6,
-      "petal_width": 0.2,
-      "sepal_length": 4.8,
-      "sepal_width": 3.1
+      "petal_length": 5.6,
+      "petal_width": 1.4,
+      "sepal_length": 6.1,
+      "sepal_width": 2.6
     }
   ],
   "total_samples": 45,
   "correct_predictions": 42,
   "experiment_metadata": {
     "experiment_name": "xgboost_split",
-    "timestamp": "2025-07-20T00:56:57.180498",
+    "timestamp": "2025-07-22T00:03:09.667938",
     "model_type": "iris_classifier",
     "approach": "baseline"
   },
