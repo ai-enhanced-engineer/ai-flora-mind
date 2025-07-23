@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.9.3 (2025-07-23)
+
+### Chores
+
+- Remove useless files
+  ([`dea2e6d`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/dea2e6d57dad01e4418ddcf358a9ec282e6a35c9))
+
+
 ## v0.9.2 (2025-07-23)
 
 ### Bug Fixes
