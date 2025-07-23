@@ -1,16 +1,16 @@
-.PHONY: default help clean-project clean-research environment-create environment-sync environment-delete environment-list sync-env format lint type-check unit-test functional-test integration-test all-test validate-branch validate-branch-strict test-validate-branch all-test-validate-branch api-dev api-validate api-docs service-build service-start service-stop service-quick-start service-validate
+.PHONY: default help clean-project clean-research environment-create environment-sync environment-delete environment-list sync-env format lint type-check unit-test functional-test integration-test all-test validate-branch validate-branch-strict test-validate-branch all-test-validate-branch api-run api-validate api-kill api-docs service-build service-start service-stop service-quick-start service-validate
 
 # ==============================================================================
 # USAGE EXAMPLES
 # ==============================================================================
 # First time setup:     make environment-create
-# Start development:    make api-dev
+# Start development:    make api-run
 # Run quality checks:   make validate-branch
 # Run all tests:        make all-test-validate-branch
 # Deploy locally:       make service-quick-start
 # Clean everything:     make clean-project clean-research
 #
-# Change model type:    FLORA_CLASSIFIER_TYPE=random_forest make api-dev
+# Change model type:    FLORA_CLASSIFIER_TYPE=random_forest make api-run
 # Research tasks:       make -f research.mk help
 # ==============================================================================
 
@@ -139,7 +139,7 @@ all-test: ## Run all tests with coverage report
 	uv run python -m pytest -m "not integration" -vv -s $(TEST_DIR) \
 		--cov=ai_flora_mind \
 		--cov-config=pyproject.toml \
-		--cov-fail-under=90 \
+		--cov-fail-under=97 \
 		--cov-report=term-missing
 
 # ----------------------------
@@ -173,27 +173,32 @@ all-test-validate-branch: ## Validate branch and run all tests
 # Local Development
 # ----------------------------
 
-api-dev: environment-sync ## Start API server in dev mode. Example: FLORA_CLASSIFIER_TYPE=random_forest make api-dev'
+api-run: environment-sync ## Start API server in dev mode. Example: FLORA_CLASSIFIER_TYPE=random_forest make api-run'
 	@echo "Starting AI Flora Mind API in development mode..."
 	@echo "🤖 Current model: $(shell echo $${FLORA_CLASSIFIER_TYPE:-heuristic})"
 	@echo ""
 	@echo "📝 Model selection examples:"
-	@echo "   FLORA_CLASSIFIER_TYPE=heuristic make api-dev       # Rule-based classifier"
-	@echo "   FLORA_CLASSIFIER_TYPE=decision_tree make api-dev   # Decision tree (96% accuracy)"
-	@echo "   FLORA_CLASSIFIER_TYPE=random_forest make api-dev   # Random forest (96% accuracy)"
-	@echo "   FLORA_CLASSIFIER_TYPE=xgboost make api-dev         # XGBoost (98%+ accuracy)"
+	@echo "   FLORA_CLASSIFIER_TYPE=heuristic make api-run       # Rule-based classifier"
+	@echo "   FLORA_CLASSIFIER_TYPE=decision_tree make api-run   # Decision tree (96% accuracy)"
+	@echo "   FLORA_CLASSIFIER_TYPE=random_forest make api-run   # Random forest (96% accuracy)"
+	@echo "   FLORA_CLASSIFIER_TYPE=xgboost make api-run         # XGBoost (98%+ accuracy)"
 	@echo ""
 	@echo "🔧 Advanced options using ARGS:"
-	@echo "   make api-dev ARGS='--model-type decision_tree --log-level debug'"
-	@echo "   make api-dev ARGS='--port 8001 --host localhost'"
-	@echo "   make api-dev ARGS='--help'  # Show all CLI options"
+	@echo "   make api-run ARGS='--model-type decision_tree --log-level debug'"
+	@echo "   make api-run ARGS='--port 8001 --host localhost'"
+	@echo "   make api-run ARGS='--help'  # Show all CLI options"
 	uv run python -m scripts.isolation.api_layer --reload $(ARGS)
 	$(GREEN_LINE)
 
-api-validate: environment-sync ## Run comprehensive API validation using full iris dataset (requires running server)
+api-validate: ## Run comprehensive API validation using full iris dataset (requires running server)
 	@echo "🧪 Running comprehensive API validation with full iris dataset..."
-	@echo "💡 Ensure API server is running first: make api-dev"
+	@echo "💡 Ensure API server is running first: make api-run"
 	uv run python -m scripts.validation.api_comprehensive_test
+	$(GREEN_LINE)
+
+api-kill: ## Kill running API development server
+	@echo "🛑 Stopping API development server..."
+	@pkill -f "scripts.isolation.api_layer" && echo "✅ API server stopped successfully" || echo "ℹ️  No API server process found"
 	$(GREEN_LINE)
 
 api-docs: environment-sync ## Open Swagger UI documentation (starts API if not running)
@@ -208,17 +213,40 @@ api-docs: environment-sync ## Open Swagger UI documentation (starts API if not r
 	uv run python -m scripts.isolation.api_layer --reload
 	$(GREEN_LINE)
 
+api-test-all-models: environment-sync ## Test all 4 models via API with sample predictions
+	@echo "🧪 Testing all models via API..."
+	@for MODEL in heuristic decision_tree random_forest xgboost; do \
+		echo ""; \
+		echo "=== Testing $$MODEL ==="; \
+		FLORA_CLASSIFIER_TYPE=$$MODEL make api-run > /tmp/api_$$MODEL.log 2>&1 & \
+		API_PID=$$!; \
+		sleep 3; \
+		echo "Test 1 (Setosa):"; \
+		curl -s -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}'; \
+		echo ""; \
+		echo "Test 2 (Versicolor):"; \
+		curl -s -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"sepal_length": 5.9, "sepal_width": 3.0, "petal_length": 4.2, "petal_width": 1.5}'; \
+		echo ""; \
+		echo "Test 3 (Virginica):"; \
+		curl -s -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"sepal_length": 6.7, "sepal_width": 3.3, "petal_length": 5.7, "petal_width": 2.1}'; \
+		echo ""; \
+		kill $$API_PID 2>/dev/null || true; \
+		sleep 1; \
+	done
+	@echo ""
+	@echo "✅ All models tested successfully!"
+	$(GREEN_LINE)
 
 # ----------------------------
 # Build and Deployment
 # ----------------------------
 
-service-build: ## Build AI Flora Mind service
+service-build: environment-sync  ## Build AI Flora Mind service
 	@echo "Building AI Flora Mind service..."
 	docker-compose build
 	$(GREEN_LINE)
 
-service-start: ## Start AI Flora Mind service
+service-start: service-build ## Start AI Flora Mind service
 	@echo "Starting AI Flora Mind service..."
 	@echo "API will be available at: http://localhost:8000"
 	@echo "Swagger UI at: http://localhost:8000/docs"
@@ -255,18 +283,12 @@ service-quick-start: ## Build and start AI Flora Mind service in one command
 	$(MAKE) service-start
 
 service-validate: environment-sync ## Start service and run comprehensive validation with full iris dataset
-	@echo "🧪 Starting AI Flora Mind service and running comprehensive validation..."
-	@echo "Starting service for testing..."
-	docker-compose up -d ai-flora-mind-service
-	@echo "Waiting for service to start..."
-	@sleep 15
 	@echo "Testing health endpoint..."
 	@curl -f http://localhost:8000/health || (echo "Health check failed" && exit 1)
 	@echo "Running comprehensive API validation with full iris dataset..."
 	uv run python -m scripts.validation.api_comprehensive_test || (echo "Comprehensive validation failed" && $(MAKE) service-stop && exit 1)
 	@echo "✅ Service comprehensive validation passed!"
 	$(GREEN_LINE)
-
 
 # ----------------------------
 # Research and Modeling (from research.mk)

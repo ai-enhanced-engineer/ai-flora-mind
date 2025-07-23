@@ -25,13 +25,13 @@ Complete development guide consolidating essential information for efficient dev
   - Available types: `heuristic`, `decision_tree`, `random_forest`, `xgboost`
 
 ### API Development
-- **Start API locally**: `make api-dev` (with auto-reload)
-  - `FLORA_CLASSIFIER_TYPE=heuristic make api-dev` - Rule-based classifier
-  - `FLORA_CLASSIFIER_TYPE=decision_tree make api-dev` - Decision tree (96% accuracy)
-  - `FLORA_CLASSIFIER_TYPE=random_forest make api-dev` - Random forest (96% accuracy)
-  - `FLORA_CLASSIFIER_TYPE=xgboost make api-dev` - XGBoost (not implemented)
-  - `make api-dev ARGS='--model-type decision_tree --log-level debug'` - CLI arguments
-  - `make api-dev ARGS='--port 8001 --host localhost'` - Custom port/host
+- **Start API locally**: `make api-run` (with auto-reload)
+  - `FLORA_CLASSIFIER_TYPE=heuristic make api-run` - Rule-based classifier
+  - `FLORA_CLASSIFIER_TYPE=decision_tree make api-run` - Decision tree (96% accuracy)
+  - `FLORA_CLASSIFIER_TYPE=random_forest make api-run` - Random forest (96% accuracy)
+  - `FLORA_CLASSIFIER_TYPE=xgboost make api-run` - XGBoost (not implemented)
+  - `make api-run ARGS='--model-type decision_tree --log-level debug'` - CLI arguments
+  - `make api-run ARGS='--port 8001 --host localhost'` - Custom port/host
 - **Validate API**: `make api-validate` (run comprehensive tests)
 - **API with docs**: `make api-docs` (opens Swagger UI)
 

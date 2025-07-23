@@ -80,11 +80,10 @@ class XGBoostPredictor(BasePredictor):
 
         # Make prediction
         prediction_array = self.model.predict(X_features)
+        prediction_numeric = int(prediction_array[0])
 
-        # Convert numeric prediction to class name
-        class_names = ["setosa", "versicolor", "virginica"]
-        prediction_idx = int(prediction_array[0])
-        prediction = class_names[prediction_idx]
+        # Map numeric prediction to species name
+        prediction = self.SPECIES_MAP[prediction_numeric]
 
         logger.debug(
             "XGBoost prediction completed",

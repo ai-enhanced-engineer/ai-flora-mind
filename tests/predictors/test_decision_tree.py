@@ -151,36 +151,6 @@ def test__decision_tree_predictor__interface_compliance(temp_decision_tree_model
 
 
 @pytest.mark.integration
-def test__decision_tree_predictor__real_model_predictions() -> None:
-    import os
-
-    # Only run if the default model exists
-    default_model_path = "research/models/decision_tree_comprehensive_2025_07_19_233107.joblib"
-    if not os.path.exists(default_model_path):
-        pytest.skip("Default model not available for integration test")
-
-    predictor = DecisionTreePredictor()
-
-    # Test with known iris samples
-    setosa_sample = IrisMeasurements(sepal_length=5.1, sepal_width=3.5, petal_length=1.4, petal_width=0.2)
-    versicolor_sample = IrisMeasurements(sepal_length=6.0, sepal_width=3.0, petal_length=4.5, petal_width=1.5)
-    virginica_sample = IrisMeasurements(sepal_length=7.0, sepal_width=3.0, petal_length=6.0, petal_width=2.0)
-
-    # Make predictions
-    setosa_pred = predictor.predict(setosa_sample)
-    versicolor_pred = predictor.predict(versicolor_sample)
-    virginica_pred = predictor.predict(virginica_sample)
-
-    # Verify all predictions are valid
-    assert setosa_pred in ["setosa", "versicolor", "virginica"]
-    assert versicolor_pred in ["setosa", "versicolor", "virginica"]
-    assert virginica_pred in ["setosa", "versicolor", "virginica"]
-
-    # With a well-trained model, we expect good predictions on typical samples
-    # Note: We don't assert exact predictions since model performance can vary
-
-
-@pytest.mark.integration
 def test__decision_tree_predictor__production_model_predictions() -> None:
     import os
 

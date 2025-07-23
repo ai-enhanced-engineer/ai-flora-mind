@@ -79,7 +79,10 @@ class RandomForestPredictor(BasePredictor):
 
         # Make prediction
         prediction_array = self.model.predict(X_features)
-        prediction = str(prediction_array[0])
+        prediction_numeric = int(prediction_array[0])
+
+        # Map numeric prediction to species name
+        prediction = self.SPECIES_MAP[prediction_numeric]
 
         logger.debug(
             "Random Forest prediction completed",

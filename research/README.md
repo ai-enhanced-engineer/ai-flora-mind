@@ -2,6 +2,8 @@
 
 This directory contains all research experiments, analysis, and findings for the AI Flora Mind iris classification project.
 
+[← Back to main README](../README.md)
+
 ## Understanding the Research
 
 1. **Start here**: Read [EXPERIMENTS_JOURNEY.md](./EXPERIMENTS_JOURNEY.md) for the complete narrative
@@ -54,6 +56,17 @@ research/
 | XGBoost | 96.0% | 150 trees, heavy reg | LOOCV |
 
 **Key Insight**: All approaches converge at ~96% accuracy, suggesting this is the Bayes error rate for the Iris dataset.
+
+## From Research to Production
+
+After rigorous experimentation and validation, the best performing models are promoted to production:
+
+1. **Research Phase**: Models are trained and saved in `research/models/` with timestamps
+2. **Selection**: Best models are chosen based on accuracy and validation results
+3. **Promotion**: Selected models are copied to [`registry/prd/`](../registry/prd/) with clean names (see [selection criteria](../registry/prd/README.md))
+4. **Docker Deployment**: The production registry is included in the Docker image, making all models available for deployment via the `FLORA_CLASSIFIER_TYPE` environment variable
+
+This workflow ensures only validated, high-performing models reach production while maintaining full traceability back to their research origins.
 
 ## Experiment Result Structure
 

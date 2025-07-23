@@ -9,7 +9,7 @@ services:
     environment:
       # Model type configuration
       # Options: heuristic, random_forest, decision_tree, xgboost
-      - FLORA_CLASSIFIER_TYPE=${FLORA_CLASSIFIER_TYPE:-xgboost}
+      - FLORA_CLASSIFIER_TYPE=${FLORA_CLASSIFIER_TYPE:-heuristic}
     restart: unless-stopped
 
 networks:

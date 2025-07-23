@@ -7,7 +7,7 @@ implementations must inherit from.
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar, Dict
 
 import joblib
 from pydantic import BaseModel
@@ -20,6 +20,9 @@ logger = get_logger(__name__)
 
 class BasePredictor(BaseModel, ABC):
     model_config = {"arbitrary_types_allowed": True}
+
+    # Mapping from numeric labels to species names used by all ML models
+    SPECIES_MAP: ClassVar[Dict[int, str]] = {0: "setosa", 1: "versicolor", 2: "virginica"}
 
     @abstractmethod
     def predict(self, measurements: IrisMeasurements) -> str:

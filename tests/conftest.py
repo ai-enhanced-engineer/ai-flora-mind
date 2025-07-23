@@ -41,7 +41,7 @@ def temp_model_path(tmp_path):
     model = RandomForestClassifier(n_estimators=10, random_state=42)
     # 14 features to match Random Forest feature engineering
     X_dummy = np.random.rand(10, 14)
-    y_dummy = ["setosa"] * 3 + ["versicolor"] * 3 + ["virginica"] * 4
+    y_dummy = [0] * 3 + [1] * 3 + [2] * 4  # Numeric labels: 0=setosa, 1=versicolor, 2=virginica
     model.fit(X_dummy, y_dummy)
 
     temp_model_file = tmp_path / "test_model.joblib"
@@ -59,7 +59,7 @@ def temp_decision_tree_model_path(tmp_path):
     model = DecisionTreeClassifier(max_depth=5, random_state=42)
     # 5 features to match Decision Tree feature engineering (4 original + petal_area)
     X_dummy = np.random.rand(10, 5)
-    y_dummy = ["setosa"] * 3 + ["versicolor"] * 3 + ["virginica"] * 4
+    y_dummy = [0] * 3 + [1] * 3 + [2] * 4  # Numeric labels: 0=setosa, 1=versicolor, 2=virginica
     model.fit(X_dummy, y_dummy)
 
     temp_model_file = tmp_path / "test_decision_tree_model.joblib"

@@ -11,6 +11,7 @@ Usage:
 
 import argparse
 import asyncio
+import random
 import sys
 from typing import Dict, List, Tuple
 
@@ -66,11 +67,15 @@ def prepare_api_samples() -> Tuple[List[Dict[str, float]], List[str]]:
         }
         samples.append(sample)
 
+    # Convert numeric targets to species names
+    species_names = ["setosa", "versicolor", "virginica"]
+    true_species = [species_names[int(target)] for target in y]
+
     print(f"📈 Loaded {len(samples)} samples across {len(set(y))} species")
-    return samples, y.tolist()
+    return samples, true_species
 
 
-async def run_comprehensive_test(host: str, port: int) -> None:
+async def run_comprehensive_test(host: str, port: int) -> int:
     """Full dataset validation with expected 96% accuracy threshold and perfect Setosa separation."""
     base_url = f"http://{host}:{port}"
 
@@ -88,28 +93,59 @@ async def run_comprehensive_test(host: str, port: int) -> None:
         if not await test_api_health(client, base_url):
             print("❌ API server is not responding. Please start the server first.")
             print("💡 Try: make api-layer-isolate")
-            sys.exit(1)
+            return 1
 
         print()
         print("🔄 Testing all samples against API...")
+        print()
 
-        # Test all samples
+        # Test all samples and collect results
         predictions = []
         failed_requests = 0
+        inference_results = []  # Store full results for display
 
         for i, sample in enumerate(samples):
             success, prediction = await test_single_prediction(client, base_url, sample)
 
             if success:
                 predictions.append(prediction)
-                # Show progress every 25 samples
-                if (i + 1) % 25 == 0:
-                    print(f"   Processed {i + 1}/{len(samples)} samples...")
+                # Store inference result for potential display
+                inference_results.append(
+                    {
+                        "index": i,
+                        "sample": sample,
+                        "true_label": true_species[i],
+                        "prediction": prediction,
+                        "correct": prediction == true_species[i],
+                    }
+                )
             else:
                 predictions.append("error")
                 failed_requests += 1
 
-        print(f"✅ Completed testing {len(samples)} samples")
+        # Display 50 random inference results
+        if inference_results:
+            num_to_show = min(50, len(inference_results))
+            random_results = random.sample(inference_results, num_to_show)
+
+            print(f"📊 Showing {num_to_show} random inference results:")
+            print("=" * 80)
+
+            for result in sorted(random_results, key=lambda x: x["index"]):
+                correctness = "✅" if result["correct"] else "❌"
+                print(
+                    f"Sample #{result['index'] + 1:3d}: "
+                    f"SL={result['sample']['sepal_length']:.1f}, "
+                    f"SW={result['sample']['sepal_width']:.1f}, "
+                    f"PL={result['sample']['petal_length']:.1f}, "
+                    f"PW={result['sample']['petal_width']:.1f} | "
+                    f"True: {result['true_label']:>10s} | "
+                    f"Pred: {result['prediction']:>10s} {correctness}"
+                )
+
+            print("=" * 80)
+
+        print(f"\n✅ Completed testing {len(samples)} samples")
         print()
 
         # Calculate metrics
@@ -127,7 +163,7 @@ async def run_comprehensive_test(host: str, port: int) -> None:
 
         if not valid_predictions:
             print("❌ No successful predictions to analyze")
-            sys.exit(1)
+            return 1
 
         # Calculate overall accuracy
         correct = sum(1 for pred, true in zip(valid_predictions, valid_true_labels) if pred == true)
@@ -181,10 +217,10 @@ async def run_comprehensive_test(host: str, port: int) -> None:
 
         if failed_requests == 0 and overall_accuracy >= expected_accuracy:
             print("🏆 All tests passed - API is production ready!")
-            sys.exit(0)
+            return 0
         else:
             print("⚠️  Some issues detected - please review results above")
-            sys.exit(1)
+            return 1
 
 
 def main() -> None:
@@ -195,10 +231,13 @@ def main() -> None:
     args = parser.parse_args()
 
     try:
-        asyncio.run(run_comprehensive_test(args.host, args.port))
+        exit_code = asyncio.run(run_comprehensive_test(args.host, args.port))
+        sys.exit(exit_code)
     except KeyboardInterrupt:
         print("\n🛑 Test interrupted by user")
         sys.exit(1)
+    except SystemExit:
+        raise
     except Exception as e:
         print(f"\n❌ Unexpected error: {e}")
         sys.exit(1)
