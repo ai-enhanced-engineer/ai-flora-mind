@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.9.2 (2025-07-23)
+
+### Bug Fixes
+
+- Enhanced Project Entry Point for Evaluators and final fixes (#18)
+  ([#18](https://github.com/maintainx-take-home/leo-garcia-vargas/pull/18),
+  [`facd719`](https://github.com/maintainx-take-home/leo-garcia-vargas/commit/facd71967686a3e29b8c4e5ff3d60d6a18d6d5f8))
+
+
 ## v0.9.1 (2025-07-22)
 
 ### Research
