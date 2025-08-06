@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.1.1 (2025-08-06)
+
+### Chores
+
+- Add Apache License 2.0 to project
+  ([`dd5a4c0`](https://github.com/ai-enhanced-engineer/ai-flora-mind/commit/dd5a4c0390d409860c050334b87436766e15af35))
+
+
 ## v0.1.0 (2025-08-01)
 
 - Initial Release
