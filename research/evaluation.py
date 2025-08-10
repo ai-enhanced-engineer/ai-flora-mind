@@ -26,17 +26,8 @@ def evaluate_model(
     iris_data: Bunch,
     X_subset: np.ndarray[Any, Any] | None = None,
 ) -> Dict[str, Any]:
-    logger.info("Step 4: Evaluating model performance")
-
     # Calculate performance metrics
     accuracy = accuracy_score(y_true, y_pred)
-
-    logger.info(
-        "Performance metrics calculated",
-        overall_accuracy=accuracy,
-        correct_predictions=int(accuracy * len(y_true)),
-        total_samples=len(y_true),
-    )
 
     # Generate detailed classification report
     class_report = classification_report(y_true, y_pred, target_names=iris_data.target_names, output_dict=True)
@@ -46,29 +37,41 @@ def evaluate_model(
 
     # Calculate per-class accuracy
     per_class_accuracy = {}
+
+    # Check if labels are numeric or string
+    is_numeric = isinstance(y_true[0], (int, np.integer))
+
     for i, species in enumerate(iris_data.target_names):
-        species_mask = y_true == i  # Use numeric index
-        species_predictions = y_pred[species_mask]
-        species_accuracy = accuracy_score([i] * len(species_predictions), species_predictions)
+        if is_numeric:
+            species_mask = y_true == i  # Use numeric index
+            species_predictions = y_pred[species_mask]
+            species_accuracy = accuracy_score([i] * len(species_predictions), species_predictions)
+        else:
+            # Handle string labels
+            species_mask = y_true == species
+            species_predictions = y_pred[species_mask]
+            species_accuracy = accuracy_score([species] * len(species_predictions), species_predictions)
         per_class_accuracy[species] = species_accuracy
 
     # Analyze misclassifications
     misclassified_indices = [i for i, (true, pred) in enumerate(zip(y_true, y_pred)) if true != pred]
 
-    logger.info(
-        "Analyzing misclassifications",
-        misclassified_count=len(misclassified_indices),
-        misclassification_rate=len(misclassified_indices) / len(y_true),
-    )
-
     misclassifications = []
     # Use subset features if provided (for split experiments), otherwise use full dataset
     X = X_subset if X_subset is not None else iris_data.data
     for idx in misclassified_indices:
+        # Handle both numeric and string labels
+        if is_numeric:
+            true_species = iris_data.target_names[y_true[idx]]
+            pred_species = iris_data.target_names[y_pred[idx]]
+        else:
+            true_species = y_true[idx]
+            pred_species = y_pred[idx]
+
         misc_data = {
             "index": idx,
-            "true_species": iris_data.target_names[y_true[idx]],
-            "predicted_species": iris_data.target_names[y_pred[idx]],
+            "true_species": true_species,
+            "predicted_species": pred_species,
             "petal_length": X[idx, 2],
             "petal_width": X[idx, 3],
             "sepal_length": X[idx, 0],
@@ -79,8 +82,8 @@ def evaluate_model(
         logger.debug(
             "Misclassification detected",
             sample_index=idx,
-            true_label=y_true[idx],
-            predicted_label=y_pred[idx],
+            true_label=true_species if not is_numeric else y_true[idx],
+            predicted_label=pred_species if not is_numeric else y_pred[idx],
             petal_length=X[idx, 2],
             petal_width=X[idx, 3],
         )
@@ -95,90 +98,41 @@ def evaluate_model(
         "correct_predictions": len(y_true) - len(misclassified_indices),
     }
 
+    # Log final evaluation summary
     logger.info(
-        "Evaluation completed successfully",
-        overall_accuracy=accuracy,
-        setosa_accuracy=per_class_accuracy.get("setosa", 0),
-        versicolor_accuracy=per_class_accuracy.get("versicolor", 0),
-        virginica_accuracy=per_class_accuracy.get("virginica", 0),
-        total_misclassifications=len(misclassifications),
+        "Evaluation completed",
+        accuracy=f"{accuracy:.3f}",
+        misclassifications=len(misclassifications),
     )
 
     return results
 
 
 def log_performance_summary(results: Dict[str, Any], experiment_name: str) -> None:
-    """Comprehensive performance logging with EDA validation and target accuracy assessment."""
-    logger.info("Generating performance summary")
+    """Log performance summary with EDA validation and target accuracy assessment."""
 
-    # Log overall performance metrics - check both new and legacy locations
+    # Extract overall accuracy from either location
     if "performance_metrics" in results:
-        total_samples = results["performance_metrics"]["total_samples"]
-        correct_predictions = results["performance_metrics"]["correct_predictions"]
         overall_accuracy = results["performance_metrics"]["overall_accuracy"]
     else:
-        total_samples = results["total_samples"]
-        correct_predictions = results["correct_predictions"]
         overall_accuracy = results["overall_accuracy"]
 
+    # Log essential performance metrics in single statement
+    per_class = results["per_class_accuracy"]
     logger.info(
-        "Overall performance summary",
-        total_samples=total_samples,
-        correct_predictions=correct_predictions,
-        overall_accuracy=f"{overall_accuracy:.3f}",
-        accuracy_percentage=f"{overall_accuracy * 100:.1f}%",
+        "Performance",
+        overall=f"{overall_accuracy:.1%}",
+        setosa=f"{per_class['setosa']:.1%}",
+        versicolor=f"{per_class['versicolor']:.1%}",
+        virginica=f"{per_class['virginica']:.1%}",
     )
 
-    # Log per-class accuracy
-    for species, accuracy in results["per_class_accuracy"].items():
-        logger.info(
-            "Per-class accuracy",
-            species=species.capitalize(),
-            accuracy=f"{accuracy:.3f}",
-            accuracy_percentage=f"{accuracy * 100:.1f}%",
-        )
+    # Skip verbose confusion matrix and algorithm details logging
 
-    # Log confusion matrix data
-    confusion_data = {}
-    species_names = ["setosa", "versicolor", "virginica"]
-    for i, true_species in enumerate(species_names):
-        row_data = {}
-        for j, pred_species in enumerate(species_names):
-            row_data[f"predicted_{pred_species}"] = int(results["confusion_matrix"][i][j])
-        confusion_data[f"true_{true_species}"] = row_data
-
-    logger.info("Confusion matrix", confusion_matrix=confusion_data)
-
-    # Log algorithm details
-    algorithm_details = results.get("algorithm_details", {})
-    if algorithm_details:
-        logger.info(
-            "Algorithm details",
-            algorithm_type=algorithm_details.get("algorithm_type", "unknown"),
-            features_used=algorithm_details.get("features_used", []),
-            training_required=algorithm_details.get("training_required", True),
-        )
-
-        if "rules" in algorithm_details:
-            logger.info("Algorithm rules applied", rules=algorithm_details["rules"])
-
-    # Log misclassifications
-    if results["misclassifications"]:
-        logger.info("Misclassifications detected", total_misclassifications=len(results["misclassifications"]))
-
-        for misc in results["misclassifications"]:
-            logger.warning(
-                "Misclassification detail",
-                sample_index=misc["index"],
-                true_species=misc["true_species"],
-                predicted_species=misc["predicted_species"],
-                petal_length=f"{misc['petal_length']:.1f}",
-                petal_width=f"{misc['petal_width']:.1f}",
-                sepal_length=f"{misc['sepal_length']:.1f}",
-                sepal_width=f"{misc['sepal_width']:.1f}",
-            )
-    else:
-        logger.info("Perfect classification - no misclassifications detected")
+    # Log misclassification summary only
+    misc_count = len(results.get("misclassifications", []))
+    if misc_count > 0:
+        logger.info(f"Misclassifications: {misc_count} samples")
 
     # Log key insights and validation
     setosa_acc = results["per_class_accuracy"]["setosa"]
@@ -214,8 +168,6 @@ def log_performance_summary(results: Dict[str, Any], experiment_name: str) -> No
 
     # Save results to JSON file
     _save_results_to_json(results, experiment_name)
-
-    logger.info("Performance summary completed")
 
 
 def _save_results_to_json(results: Dict[str, Any], experiment_name: str) -> None:

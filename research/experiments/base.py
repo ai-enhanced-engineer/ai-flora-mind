@@ -49,14 +49,29 @@ def save_experiment_results(
     results: Dict[str, Any], algorithm_type: str, experiment_type: str, model: Optional[Any] = None
 ) -> str:
     """Save experiment results and optionally the trained model."""
+
+    # Convert numpy arrays to lists for JSON serialization
+    def convert_numpy_to_list(obj: Any) -> Any:
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, (np.int64, np.int32, np.float64, np.float32)):
+            return obj.item()
+        elif isinstance(obj, dict):
+            return {k: convert_numpy_to_list(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_numpy_to_list(item) for item in obj]
+        return obj
+
     timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S")
 
     # Save results JSON
     results_filename = f"{algorithm_type}_{experiment_type}_{timestamp}.json"
     results_path = os.path.join(RESULTS_DIR, results_filename)
 
+    json_safe_results = convert_numpy_to_list(results)
+
     with open(results_path, "w") as f:
-        json.dump(results, f, indent=2)
+        json.dump(json_safe_results, f, indent=2)
 
     logger.info("Results saved", path=results_path)
 
