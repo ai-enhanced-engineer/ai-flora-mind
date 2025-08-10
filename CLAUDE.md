@@ -110,6 +110,7 @@ Complete development guide consolidating essential information for efficient dev
 - Maintain a clean modular structure across services, pipelines, or libraries
 - Each module or class should encapsulate a distinct, well-defined purpose
 - Do not mix unrelated responsibilities within the same abstraction
+- **Consolidation Pattern**: When multiple classes share >90% identical logic, consider a unified approach with configuration-driven behavior
 
 ### 6. Production Readiness by Default
 - Assume all code is production-bound:
@@ -139,10 +140,19 @@ Complete development guide consolidating essential information for efficient dev
 - **Environment mapping** via `alias` parameter
 
 ### Component Development
+
+#### Traditional Approach (Individual Components)
 1. Add to relevant enum for registration
 2. Implement with proper interface/signature
 3. Add to factory function in registry
 4. Create config subclass if needed
+
+#### Unified Approach (Recommended for Similar Components)
+1. **Evaluate for Consolidation**: If new component shares >90% logic with existing ones, consider unified pattern
+2. **Add to Enum**: Register component type in configuration enum
+3. **Configure Behavior**: Add component-specific behavior to unified implementation
+4. **Update Factory**: Leverage existing factory logic where possible
+5. **Verify Tests**: Ensure parametrized tests automatically cover new component type
 
 ## Testing Guidelines
 
@@ -284,6 +294,28 @@ type: brief description
 - `test`: Testing improvements or additions
 - `docs`: Documentation updates
 
+#### Consolidation/Refactoring Template
+For significant code consolidation and architectural improvements:
+
+```
+refactor: consolidate {ComponentType} with unified {PatternName} architecture
+
+- Replace {N} individual {ComponentType} classes with unified {NewClass}
+- Achieve {percentage}% code reduction while maintaining full functionality
+- Consolidate test files into parametrized approach
+- Fix type safety issues through consistent patterns
+- Simplify factory pattern implementation
+- Remove redundant docstrings following CLAUDE.md principles
+
+Code Reduction: {total_lines} lines removed ({total_percentage}% reduction)
+Quality: 100% MyPy compliance maintained, test coverage preserved
+Architecture: Single responsibility principle applied, maintainability improved
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
 #### Feature Integration Template
 For major feature additions like new predictors, use this concrete structure:
 
@@ -366,7 +398,7 @@ This guide provides comprehensive information needed for effective development, 
 
 ## Adding New Predictors - Complete Integration Process
 
-This documents the exact process we followed to integrate the Random Forest predictor, which should be repeated for future predictors (Decision Tree, XGBoost, etc.).
+This documents the exact process for integrating new predictors, which should be followed for all model types.
 
 ### Phase 1: Predictor Implementation
 
@@ -381,8 +413,8 @@ This documents the exact process we followed to integrate the Random Forest pred
 
 **Example Structure**:
 ```python
-# ml_production_service/predictors/random_forest.py
-class RandomForestPredictor(BasePredictor):
+# ml_production_service/predictors/{algorithm_name}.py
+class NewAlgorithmPredictor(BasePredictor):
     def __init__(self, model_path: str) -> None:
         # Model loading with error handling
         
@@ -394,7 +426,7 @@ class RandomForestPredictor(BasePredictor):
 - **File**: `ml_production_service/predictors/__init__.py`
 - **Action**: Export new predictor class
 ```python
-from .random_forest import RandomForestPredictor
+from .new_algorithm import NewAlgorithmPredictor
 ```
 
 #### 1.3 Add Comprehensive Unit Tests
@@ -466,9 +498,9 @@ ls -la registry/prd/
 - **Content**: Only production-ready, tested models
 - **Size Consideration**: Keep Docker images lean (include only implemented predictors)
 
-### Phase 5: Testing Integration
+### Phase 4: Testing Integration
 
-#### 5.1 Update API Integration Tests
+#### 4.1 Update API Integration Tests
 - **File**: `tests/test_api_layer.py`
 - **Action**: Add new model type to parametrized fixtures
 ```python
@@ -479,12 +511,12 @@ ls -la registry/prd/
 ])
 ```
 
-#### 5.2 Run Comprehensive Test Suite
+#### 4.2 Run Comprehensive Test Suite
 ```bash
 make all-test-validate-branch  # Must pass 90% coverage
 ```
 
-### Phase 6: Docker Integration
+### Phase 5: Docker Integration
 
 #### 6.1 Update Docker Configuration
 - **Files**: `Dockerfile`, `.dockerignore`
@@ -495,7 +527,7 @@ docker build -t ml-production-service:test .
 MPS_MODEL_TYPE=new_algorithm docker run --rm ml-production-service:test
 ```
 
-### Phase 7: Documentation and Deployment
+### Phase 6: Documentation and Deployment
 
 #### 7.1 Update Environment Configuration
 - **File**: `docker-compose.yml`
@@ -513,7 +545,7 @@ environment:
 choices=["heuristic", "random_forest", "new_algorithm"]
 ```
 
-### Phase 8: Validation Checklist
+### Phase 7: Validation Checklist
 
 Before committing new predictor integration:
 
@@ -527,7 +559,7 @@ Before committing new predictor integration:
 - [ ] **Validation**: `make all-test-validate-branch` passes
 - [ ] **Manual Testing**: API responds correctly with new predictor
 
-### Phase 9: Commit Structure
+### Phase 8: Commit Structure
 
 Follow this commit pattern for predictor integration:
 
