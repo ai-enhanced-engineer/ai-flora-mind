@@ -21,7 +21,7 @@ def get_predictor(config: ServiceConfig) -> BasePredictor:
 
     # Validate that the model type requires a file-based model
     if config.model_type not in ML_MODEL_TYPES:
-        model_type_value = config.model_type.value if hasattr(config.model_type, 'value') else str(config.model_type)
+        model_type_value = config.model_type.value if hasattr(config.model_type, "value") else str(config.model_type)
         raise ValueError(
             f"Unknown model type '{model_type_value}'. "
             f"Supported types: {', '.join(sorted([mt.value for mt in ML_MODEL_TYPES | {ModelType.HEURISTIC}]))}"

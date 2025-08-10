@@ -61,7 +61,8 @@ dev = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = [
-    "ai_flora_mind*",
+    "ml_production_service*",
+    "research*",
 ]
 
 [tool.ruff]
