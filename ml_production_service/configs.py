@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
 
@@ -14,7 +15,7 @@ class IrisMeasurements(BaseModel):
     petal_length: float = Field(..., description="Length of the petal in centimeters", gt=0)
     petal_width: float = Field(..., description="Width of the petal in centimeters", gt=0)
 
-    def to_array(self) -> np.ndarray[Any, Any]:
+    def to_array(self) -> NDArray[np.floating[Any]]:
         return np.array([self.sepal_length, self.sepal_width, self.petal_length, self.petal_width])
 
 

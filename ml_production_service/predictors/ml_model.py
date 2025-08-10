@@ -3,6 +3,7 @@
 from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 from pydantic import validate_call
 
 from ml_production_service.configs import IrisMeasurements, ModelType
@@ -32,7 +33,7 @@ class MLModelPredictor(BasePredictor):
             model_class=self.model.__class__.__name__,
         )
 
-    def _prepare_features(self, measurements: IrisMeasurements) -> np.ndarray[Any, Any]:
+    def _prepare_features(self, measurements: IrisMeasurements) -> NDArray[np.floating[Any]]:
         """Apply feature engineering based on model type."""
         X = measurements.to_array().reshape(1, -1)
         feature_names = get_feature_names()
