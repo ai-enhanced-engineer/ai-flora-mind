@@ -70,8 +70,10 @@ def main() -> None:
     loocv_true_labels: List[Any] = []
 
     for train_idx, test_idx in loocv.split(X_engineered):
-        # Create new model for each fold
-        fold_model = xgb.XGBClassifier(**model.get_params())
+        # Create new model for each fold (without early_stopping for LOOCV)
+        fold_params = model.get_params()
+        fold_params.pop("early_stopping_rounds", None)  # Remove early stopping for LOOCV
+        fold_model = xgb.XGBClassifier(**fold_params)
         fold_model.fit(X_engineered[train_idx], y[train_idx], verbose=False)
         pred = fold_model.predict(X_engineered[test_idx])[0]
         loocv_predictions.append(pred)
