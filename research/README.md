@@ -6,10 +6,10 @@ This directory contains all research experiments, analysis, and findings for the
 
 ## Understanding the Research
 
-1. **Start here**: Read [EXPERIMENTS_JOURNEY.md](./EXPERIMENTS_JOURNEY.md) for the complete narrative
-2. **Technical details**: Check individual `EXPERIMENT.md` files in each experiment directory
-3. **Raw results**: JSON files in `results/` contain detailed metrics and predictions
-4. **Trained models**: Serialized models in `models/` can be loaded with joblib
+1. **Start here**: Open [EDA.ipynb](./eda/EDA.ipynb) for key insights and analysis (5 cells, concise)
+2. **Full journey**: Read [EXPERIMENTS_JOURNEY.md](./EXPERIMENTS_JOURNEY.md) for the complete ML narrative
+3. **Technical details**: Check individual `EXPERIMENT.md` files in each experiment directory
+4. **Raw results**: JSON files in `results/` contain detailed metrics and predictions
 
 ## Directory Structure
 
@@ -21,8 +21,7 @@ research/
 ├── evaluation.py                # Model evaluation functions
 ├── features.py                  # Feature engineering module
 ├── eda/                         # Exploratory Data Analysis
-│   ├── EDA.ipynb                # Jupyter notebook with analysis
-│   └── MODELING_STRATEGY.md     # Modeling approach documentation
+│   └── EDA.ipynb                # Concise notebook with key insights (5 cells)
 ├── experiments/                 # All ML experiments
 │   ├── constants.py             # Centralized directory paths
 │   ├── rule_based_heuristic/    # Simple threshold-based baseline
