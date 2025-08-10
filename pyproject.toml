@@ -1,6 +1,6 @@
 [project]
 name = "ml-production-service"
-version = "0.1.2"
+version = "0.2.0"
 description = "Reference implementation for taking ML models from research to production"
 authors = [{name="Leopoldo Garcia Vargas", email="lk13.dev@gmail.com"}]
 license = {text = "Apache-2.0"}
