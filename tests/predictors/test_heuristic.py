@@ -1,9 +1,4 @@
-"""
-Tests for HeuristicPredictor.
-
-Tests the rule-based iris species classification predictor including
-initialization, prediction logic, algorithm behavior, and integration tests.
-"""
+"""Tests for rule-based HeuristicPredictor."""
 
 from typing import List, Tuple
 

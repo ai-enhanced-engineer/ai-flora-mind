@@ -1,8 +1,4 @@
-"""
-Unit tests for configuration models and ServiceConfig.
-
-Tests the ServiceConfig class, environment variable handling, and model path resolution.
-"""
+"""Tests for ServiceConfig and model path resolution."""
 
 import pytest
 

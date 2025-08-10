@@ -1,9 +1,4 @@
-"""
-Comprehensive tests for ml_production_service.features module.
-
-Tests all feature engineering functions, edge cases, and model-specific feature generation
-to ensure robust and accurate feature creation for iris classification.
-"""
+"""Tests for feature engineering functions."""
 
 from typing import List
 

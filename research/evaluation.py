@@ -1,9 +1,4 @@
-"""
-Evaluation Module for Rule-Based Heuristic Iris Classifier
-
-This module provides evaluation and performance summary functionality
-for the rule-based heuristic classifier.
-"""
+"""Model evaluation utilities for iris classification experiments."""
 
 import json
 from datetime import datetime
@@ -109,7 +104,7 @@ def evaluate_model(
 
 
 def log_performance_summary(results: Dict[str, Any], experiment_name: str) -> None:
-    """Log performance summary with EDA validation and target accuracy assessment."""
+    """EDA validation: Perfect Setosa classification expected. Target accuracy: 95-97%."""
 
     # Extract overall accuracy from either location
     if "performance_metrics" in results:

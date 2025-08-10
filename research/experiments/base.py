@@ -1,8 +1,4 @@
-"""
-Base utilities for research experiments.
-
-Provides common functionality used across all experiments to reduce duplication.
-"""
+"""Shared experiment utilities to eliminate code duplication."""
 
 import json
 import os
@@ -24,12 +20,7 @@ logger = get_logger(__name__)
 def load_and_prepare_data(
     model_type: ModelType, numeric_labels: bool = False
 ) -> Tuple[np.ndarray[Any, Any], np.ndarray[Any, Any], Any, List[str]]:
-    """Load iris data and engineer features for the specified model type.
-
-    Args:
-        model_type: Type of model to prepare data for
-        numeric_labels: If True, return numeric labels (for XGBoost)
-    """
+    """Load iris data with model-specific feature engineering (5 for Decision Tree, 14 for Random Forest, 9 for XGBoost)."""
     X, y_names, iris_data = load_iris_data()
 
     # XGBoost requires numeric targets

@@ -1,9 +1,4 @@
-"""
-Configuration models for ML Production Service.
-
-This module contains Pydantic models for configuration and data validation
-across the application.
-"""
+"""Configuration models for ML Production Service."""
 
 from enum import Enum
 from typing import Any
@@ -14,13 +9,6 @@ from pydantic_settings import BaseSettings
 
 
 class IrisMeasurements(BaseModel):
-    """
-    Pydantic model representing the four standard iris flower measurements.
-
-    This model encapsulates all required measurements for iris species classification
-    and provides validation for input data.
-    """
-
     sepal_length: float = Field(..., description="Length of the sepal in centimeters", gt=0)
     sepal_width: float = Field(..., description="Width of the sepal in centimeters", gt=0)
     petal_length: float = Field(..., description="Length of the petal in centimeters", gt=0)
@@ -38,13 +26,6 @@ class ModelType(Enum):
 
 
 class ServiceConfig(BaseSettings):
-    """
-    Service configuration for ML Production Service.
-
-    Reads configuration from environment variables to determine which
-    predictor model to use for iris species classification.
-    """
-
     model_type: ModelType = Field(
         default=ModelType.HEURISTIC,
         description="Type of predictor model to use for iris classification",
@@ -54,17 +35,11 @@ class ServiceConfig(BaseSettings):
     model_config = {"env_prefix": "MPS_", "case_sensitive": False, "extra": "ignore"}
 
     def get_model_path(self) -> str | None:
-        """Get the model path based on model type and environment.
-
-        Returns None for models that don't require file loading (e.g., heuristic).
-        Raises ValueError for models that should have files but aren't configured.
-        """
-        # Use consistent registry path in both local and Docker environments
+        """Get the model path based on model type."""
         base_path = "registry/prd"
 
         match self.model_type:
             case ModelType.HEURISTIC:
-                # Heuristic model doesn't require file loading
                 return None
             case ModelType.RANDOM_FOREST:
                 return f"{base_path}/random_forest.joblib"

@@ -1,20 +1,11 @@
-"""
-Iris Species Predictors
-
-Unified interface for iris prediction algorithms with abstract BasePredictor
-class and concrete implementations for heuristic and machine learning models.
-"""
+"""Predictor module exports."""
 
 from ml_production_service.predictors.base import BasePredictor
-from ml_production_service.predictors.decision_tree import DecisionTreePredictor
 from ml_production_service.predictors.heuristic import HeuristicPredictor
-from ml_production_service.predictors.random_forest import RandomForestPredictor
-from ml_production_service.predictors.xgboost import XGBoostPredictor
+from ml_production_service.predictors.ml_model import MLModelPredictor
 
 __all__ = [
     "BasePredictor",
-    "DecisionTreePredictor",
     "HeuristicPredictor",
-    "RandomForestPredictor",
-    "XGBoostPredictor",
+    "MLModelPredictor",
 ]
