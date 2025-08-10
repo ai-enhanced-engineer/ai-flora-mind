@@ -2,6 +2,23 @@
 
 <!-- version list -->
 
+## v0.1.2 (2025-08-10)
+
+### Chores
+
+- Add Claude Code GitHub Workflow (#3)
+  ([#3](https://github.com/ai-enhanced-engineer/ai-flora-mind/pull/3),
+  [`50584e3`](https://github.com/ai-enhanced-engineer/ai-flora-mind/commit/50584e3e392df5b3dff1f620984ca47588a0490b))
+
+
+## v0.1.1 (2025-08-06)
+
+### Chores
+
+- Add Apache License 2.0 to project
+  ([`dd5a4c0`](https://github.com/ai-enhanced-engineer/ai-flora-mind/commit/dd5a4c0390d409860c050334b87436766e15af35))
+
+
 ## v0.1.0 (2025-08-01)
 
 - Initial Release
