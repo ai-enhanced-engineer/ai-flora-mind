@@ -21,7 +21,7 @@ from typing import Any, List, Union
 
 import numpy as np
 
-from ai_flora_mind.logging import get_logger
+from ml_production_service.logging import get_logger
 
 from ...data import load_iris_data
 from ...evaluation import evaluate_model, log_performance_summary

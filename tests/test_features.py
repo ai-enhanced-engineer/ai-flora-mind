@@ -1,17 +1,12 @@
-"""
-Comprehensive tests for ai_flora_mind.features module.
-
-Tests all feature engineering functions, edge cases, and model-specific feature generation
-to ensure robust and accurate feature creation for iris classification.
-"""
+"""Tests for feature engineering functions."""
 
 from typing import List
 
 import numpy as np
 import pytest
 
-from ai_flora_mind.configs import ModelType
-from ai_flora_mind.features import (
+from ml_production_service.configs import ModelType
+from ml_production_service.features import (
     create_area_ratio_feature,
     create_is_likely_setosa_feature,
     create_petal_area_feature,

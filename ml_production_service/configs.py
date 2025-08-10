@@ -1,32 +1,21 @@
-"""
-Configuration models for AI Flora Mind.
-
-This module contains Pydantic models for configuration and data validation
-across the application.
-"""
+"""Configuration models for ML Production Service."""
 
 from enum import Enum
 from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
 
 
 class IrisMeasurements(BaseModel):
-    """
-    Pydantic model representing the four standard iris flower measurements.
-
-    This model encapsulates all required measurements for iris species classification
-    and provides validation for input data.
-    """
-
     sepal_length: float = Field(..., description="Length of the sepal in centimeters", gt=0)
     sepal_width: float = Field(..., description="Width of the sepal in centimeters", gt=0)
     petal_length: float = Field(..., description="Length of the petal in centimeters", gt=0)
     petal_width: float = Field(..., description="Width of the petal in centimeters", gt=0)
 
-    def to_array(self) -> np.ndarray[Any, Any]:
+    def to_array(self) -> NDArray[np.floating[Any]]:
         return np.array([self.sepal_length, self.sepal_width, self.petal_length, self.petal_width])
 
 
@@ -38,33 +27,20 @@ class ModelType(Enum):
 
 
 class ServiceConfig(BaseSettings):
-    """
-    Service configuration for AI Flora Mind.
-
-    Reads configuration from environment variables to determine which
-    predictor model to use for iris species classification.
-    """
-
     model_type: ModelType = Field(
         default=ModelType.HEURISTIC,
         description="Type of predictor model to use for iris classification",
-        alias="FLORA_CLASSIFIER_TYPE",
+        alias="MPS_MODEL_TYPE",
     )
 
-    model_config = {"env_prefix": "FLORA_", "case_sensitive": False, "extra": "ignore"}
+    model_config = {"env_prefix": "MPS_", "case_sensitive": False, "extra": "ignore"}
 
     def get_model_path(self) -> str | None:
-        """Get the model path based on model type and environment.
-
-        Returns None for models that don't require file loading (e.g., heuristic).
-        Raises ValueError for models that should have files but aren't configured.
-        """
-        # Use consistent registry path in both local and Docker environments
+        """Get the model path based on model type."""
         base_path = "registry/prd"
 
         match self.model_type:
             case ModelType.HEURISTIC:
-                # Heuristic model doesn't require file loading
                 return None
             case ModelType.RANDOM_FOREST:
                 return f"{base_path}/random_forest.joblib"

@@ -1,17 +1,17 @@
 version: '3.8'
 
 services:
-  # AI Flora Mind Service - configurable via FLORA_CLASSIFIER_TYPE
-  ai-flora-mind-service:
+  # ML Production Service - configurable via MPS_MODEL_TYPE
+  ml-production-service:
     build: .
     ports:
       - "8000:8000"
     environment:
       # Model type configuration
       # Options: heuristic, random_forest, decision_tree, xgboost
-      - FLORA_CLASSIFIER_TYPE=${FLORA_CLASSIFIER_TYPE:-heuristic}
+      - MPS_MODEL_TYPE=${MPS_MODEL_TYPE:-heuristic}
     restart: unless-stopped
 
 networks:
   default:
-    name: ai-flora-network
+    name: ml-production-network

@@ -10,7 +10,7 @@ from typing import Any, List, Tuple
 
 import numpy as np
 
-from ai_flora_mind.logging import get_logger
+from ml_production_service.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -32,12 +32,7 @@ def create_petal_area_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
     petal_width = X[:, 3]
     petal_area: np.ndarray[Any, Any] = petal_length * petal_width
 
-    logger.debug(
-        "Created petal area feature",
-        min_area=float(np.min(petal_area)),
-        max_area=float(np.max(petal_area)),
-        mean_area=float(np.mean(petal_area)),
-    )
+    # Petal area feature created
 
     return petal_area
 
@@ -126,7 +121,6 @@ def engineer_features(
 
     if model_type == ModelType.HEURISTIC:
         # Heuristic model uses only original features
-        logger.info("Feature engineering completed", total_features=X.shape[1], engineered_features=[])
         return X, feature_names
 
     elif model_type == ModelType.DECISION_TREE:

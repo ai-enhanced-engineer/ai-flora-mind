@@ -33,8 +33,8 @@ COPY --from=builder /bin/uvx /bin/uvx
 # Copy the Python virtual environment with installed dependencies
 COPY --from=builder --chown=app:app /app/.venv /app/.venv
 
-# Copy the application code (including `ai_flora_mind`) from the builder stage
-COPY --from=builder /app/ai_flora_mind /ai_flora_mind
+# Copy the application code (including `ml_production_service`) from the builder stage
+COPY --from=builder /app/ml_production_service /ml_production_service
 
 # Copy production models into the image from registry
 COPY registry/prd /app/registry/prd
@@ -52,4 +52,4 @@ ENV PYTHONPATH="/:$PYTHONPATH"
 EXPOSE 8000
 
 # Start the application using `gunicorn` managed by `uv`
-CMD ["uv", "run", "gunicorn", "-c", "/ai_flora_mind/server/gunicorn_config.py", "ai_flora_mind.server.main:get_app"]
+CMD ["uv", "run", "gunicorn", "-c", "/ml_production_service/server/gunicorn_config.py", "ml_production_service.server.main:get_app"]

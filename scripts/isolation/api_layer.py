@@ -3,8 +3,8 @@ import os
 
 import uvicorn
 
-# Set default environment variables for AI Flora Mind service
-os.environ.setdefault("SERVICE_NAME", "ai_flora_mind")
+# Set default environment variables for ML Production Service
+os.environ.setdefault("SERVICE_NAME", "ml_production_service")
 os.environ.setdefault("SERVICE_VERSION", "0.1.0")
 os.environ.setdefault("LOGGING_LEVEL", "INFO")
 os.environ.setdefault("LOG_FORMAT", "json")
@@ -14,7 +14,7 @@ os.environ.setdefault("STREAM", "stdout")
 os.environ.setdefault("ENVIRONMENT", "development")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run the AI Flora Mind API in isolation for testing.")
+    parser = argparse.ArgumentParser(description="Run the ML Production Service API in isolation for testing.")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run the service on (default: 0.0.0.0)")
     parser.add_argument("--port", type=int, default=8000, help="Port to run the service on (default: 8000)")
     parser.add_argument("--reload", action="store_true", help="Enable auto-reload for development")

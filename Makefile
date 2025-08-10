@@ -10,13 +10,13 @@
 # Deploy locally:       make service-quick-start
 # Clean everything:     make clean-project clean-research
 #
-# Change model type:    FLORA_CLASSIFIER_TYPE=random_forest make api-run
+# Change model type:    MPS_MODEL_TYPE=random_forest make api-run
 # Research tasks:       make -f research.mk help
 # ==============================================================================
 
 GREEN_LINE=@echo "\033[0;32m--------------------------------------------------\033[0m"
 
-SOURCE_DIR = ai_flora_mind/
+SOURCE_DIR = ml_production_service/
 TEST_DIR = tests/
 PROJECT_VERSION := $(shell awk '/^\[project\]/ {flag=1; next} /^\[/{flag=0} flag && /^version/ {gsub(/"/, "", $$2); print $$2}' pyproject.toml)
 PYTHON_VERSION := $(shell cat .python-version)
@@ -137,7 +137,7 @@ integration-test: ## Run integration tests with pytest
 all-test: ## Run all tests with coverage report
 	@echo "Running ALL tests with pytest..."
 	uv run python -m pytest -m "not integration" -vv -s $(TEST_DIR) \
-		--cov=ai_flora_mind \
+		--cov=ml_production_service \
 		--cov-config=pyproject.toml \
 		--cov-fail-under=97 \
 		--cov-report=term-missing
@@ -173,15 +173,15 @@ all-test-validate-branch: ## Validate branch and run all tests
 # Local Development
 # ----------------------------
 
-api-run: environment-sync ## Start API server in dev mode. Example: FLORA_CLASSIFIER_TYPE=random_forest make api-run'
-	@echo "Starting AI Flora Mind API in development mode..."
-	@echo "🤖 Current model: $(shell echo $${FLORA_CLASSIFIER_TYPE:-heuristic})"
+api-run: environment-sync ## Start API server in dev mode. Example: MPS_MODEL_TYPE=random_forest make api-run'
+	@echo "Starting ML Production Service API in development mode..."
+	@echo "🤖 Current model: $(shell echo $${MPS_MODEL_TYPE:-heuristic})"
 	@echo ""
 	@echo "📝 Model selection examples:"
-	@echo "   FLORA_CLASSIFIER_TYPE=heuristic make api-run       # Rule-based classifier"
-	@echo "   FLORA_CLASSIFIER_TYPE=decision_tree make api-run   # Decision tree (96% accuracy)"
-	@echo "   FLORA_CLASSIFIER_TYPE=random_forest make api-run   # Random forest (96% accuracy)"
-	@echo "   FLORA_CLASSIFIER_TYPE=xgboost make api-run         # XGBoost (98%+ accuracy)"
+	@echo "   MPS_MODEL_TYPE=heuristic make api-run       # Rule-based classifier"
+	@echo "   MPS_MODEL_TYPE=decision_tree make api-run   # Decision tree (96% accuracy)"
+	@echo "   MPS_MODEL_TYPE=random_forest make api-run   # Random forest (96% accuracy)"
+	@echo "   MPS_MODEL_TYPE=xgboost make api-run         # XGBoost (98%+ accuracy)"
 	@echo ""
 	@echo "🔧 Advanced options using ARGS:"
 	@echo "   make api-run ARGS='--model-type decision_tree --log-level debug'"
@@ -202,11 +202,11 @@ api-kill: ## Kill running API development server
 	$(GREEN_LINE)
 
 api-docs: environment-sync ## Open Swagger UI documentation (starts API if not running)
-	@echo "🚀 Starting AI Flora Mind API with Swagger UI..."
+	@echo "🚀 Starting ML Production Service API with Swagger UI..."
 	@echo "📖 Swagger UI will be available at: http://localhost:8000/docs"
 	@echo "📋 ReDoc will be available at: http://localhost:8000/redoc"
 	@echo "📄 OpenAPI JSON at: http://localhost:8000/openapi.json"
-	@echo "🤖 Model type: $(shell echo $${FLORA_CLASSIFIER_TYPE:-heuristic})"
+	@echo "🤖 Model type: $(shell echo $${MPS_MODEL_TYPE:-heuristic})"
 	@echo ""
 	@echo "🌐 Opening Swagger UI in browser..."
 	@(sleep 2 && open http://localhost:8000/docs) &
@@ -218,7 +218,7 @@ api-test-all-models: environment-sync ## Test all 4 models via API with sample p
 	@for MODEL in heuristic decision_tree random_forest xgboost; do \
 		echo ""; \
 		echo "=== Testing $$MODEL ==="; \
-		FLORA_CLASSIFIER_TYPE=$$MODEL make api-run > /tmp/api_$$MODEL.log 2>&1 & \
+		MPS_MODEL_TYPE=$$MODEL make api-run > /tmp/api_$$MODEL.log 2>&1 & \
 		API_PID=$$!; \
 		sleep 3; \
 		echo "Test 1 (Setosa):"; \
@@ -241,43 +241,43 @@ api-test-all-models: environment-sync ## Test all 4 models via API with sample p
 # Build and Deployment
 # ----------------------------
 
-service-build: environment-sync  ## Build AI Flora Mind service
-	@echo "Building AI Flora Mind service..."
+service-build: environment-sync  ## Build ML Production Service service
+	@echo "Building ML Production Service service..."
 	docker-compose build
 	$(GREEN_LINE)
 
-service-start: service-build ## Start AI Flora Mind service
-	@echo "Starting AI Flora Mind service..."
+service-start: service-build ## Start ML Production Service service
+	@echo "Starting ML Production Service service..."
 	@echo "API will be available at: http://localhost:8000"
 	@echo "Swagger UI at: http://localhost:8000/docs"
 	@echo ""
 	@echo "📝 Model Configuration:"
-	@echo "   Current model: ${FLORA_CLASSIFIER_TYPE:-xgboost}"
+	@echo "   Current model: ${MPS_MODEL_TYPE:-xgboost}"
 	@echo "   Available models: heuristic, decision_tree, random_forest, xgboost"
 	@echo ""
 	@echo "🔧 To change the model type:"
-	@echo "   FLORA_CLASSIFIER_TYPE=heuristic make service-start     # Rule-based (90%)"
-	@echo "   FLORA_CLASSIFIER_TYPE=decision_tree make service-start # Decision Tree (95%+)"
-	@echo "   FLORA_CLASSIFIER_TYPE=random_forest make service-start # Random Forest (97%+)"
-	@echo "   FLORA_CLASSIFIER_TYPE=xgboost make service-start       # XGBoost (98%+)"
+	@echo "   MPS_MODEL_TYPE=heuristic make service-start     # Rule-based (90%)"
+	@echo "   MPS_MODEL_TYPE=decision_tree make service-start # Decision Tree (95%+)"
+	@echo "   MPS_MODEL_TYPE=random_forest make service-start # Random Forest (97%+)"
+	@echo "   MPS_MODEL_TYPE=xgboost make service-start       # XGBoost (98%+)"
 	@echo ""
 	@echo "   💡 Tip: To permanently change the default, edit docker-compose.yml"
 	@echo ""
-	docker-compose up ai-flora-mind-service
+	docker-compose up ml-production-service
 	$(GREEN_LINE)
 
-service-stop: ## Stop AI Flora Mind service
-	@echo "Stopping AI Flora Mind service..."
+service-stop: ## Stop ML Production Service service
+	@echo "Stopping ML Production Service service..."
 	docker-compose down
 	$(GREEN_LINE)
 
-service-quick-start: ## Build and start AI Flora Mind service in one command
+service-quick-start: ## Build and start ML Production Service service in one command
 	@echo "🚀 Quick start options:"
 	@echo "   make service-quick-start                          # Uses default (xgboost)"
-	@echo "   FLORA_CLASSIFIER_TYPE=heuristic make service-quick-start"
-	@echo "   FLORA_CLASSIFIER_TYPE=decision_tree make service-quick-start"
-	@echo "   FLORA_CLASSIFIER_TYPE=random_forest make service-quick-start"
-	@echo "   FLORA_CLASSIFIER_TYPE=xgboost make service-quick-start"
+	@echo "   MPS_MODEL_TYPE=heuristic make service-quick-start"
+	@echo "   MPS_MODEL_TYPE=decision_tree make service-quick-start"
+	@echo "   MPS_MODEL_TYPE=random_forest make service-quick-start"
+	@echo "   MPS_MODEL_TYPE=xgboost make service-quick-start"
 	@echo ""
 	$(MAKE) service-build
 	$(MAKE) service-start

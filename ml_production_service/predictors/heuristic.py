@@ -1,46 +1,22 @@
-"""
-Heuristic predictor for iris species classification.
-
-Implements a simple rule-based classifier using only petal measurements
-for species prediction with perfect Setosa separation.
-"""
+"""Rule-based iris classifier with perfect Setosa separation."""
 
 from pydantic import validate_call
 
-from ai_flora_mind.configs import IrisMeasurements
-from ai_flora_mind.logging import get_logger
-from ai_flora_mind.predictors.base import BasePredictor
+from ml_production_service.configs import IrisMeasurements
+from ml_production_service.logging import get_logger
+from ml_production_service.predictors.base import BasePredictor
 
 logger = get_logger(__name__)
 
 
 class HeuristicPredictor(BasePredictor):
-    """
-    Heuristic predictor using simple decision rules.
-
-    Based on EDA analysis showing perfect Setosa separation using petal_length < 2.0
-    and reasonable Versicolor/Virginica separation using petal_width < 1.7.
-    """
+    """EDA-based thresholds: petal_length < 2.0 for Setosa, petal_width < 1.7 for Versicolor."""
 
     setosa_threshold: float = 2.0
     versicolor_threshold: float = 1.7
 
     @validate_call
     def predict(self, measurements: IrisMeasurements) -> str:
-        """
-        Predict using measurements (heuristic only uses petal measurements).
-
-        Decision Rules:
-        1. If petal_length < 2.0 → setosa (perfect separation)
-        2. If petal_width < 1.7 → versicolor
-        3. Otherwise → virginica
-
-        Args:
-            measurements: Complete iris measurements
-
-        Returns:
-            Predicted species: 'setosa', 'versicolor', or 'virginica'
-        """
         logger.debug(
             "Classifying iris sample", petal_length=measurements.petal_length, petal_width=measurements.petal_width
         )

@@ -1,35 +1,16 @@
-"""
-Shared test fixtures for predictor tests.
-
-Contains common fixtures used across multiple predictor test modules.
-"""
+"""Test fixtures for predictor tests."""
 
 from typing import List, Tuple
 
 import pytest
 
-from ai_flora_mind.configs import IrisMeasurements
-from ai_flora_mind.predictors import DecisionTreePredictor, HeuristicPredictor, RandomForestPredictor, XGBoostPredictor
+from ml_production_service.configs import IrisMeasurements
+from ml_production_service.predictors import HeuristicPredictor
 
 
 @pytest.fixture
 def heuristic_predictor() -> HeuristicPredictor:
     return HeuristicPredictor()
-
-
-@pytest.fixture
-def random_forest_predictor() -> RandomForestPredictor:
-    return RandomForestPredictor()
-
-
-@pytest.fixture
-def decision_tree_predictor() -> DecisionTreePredictor:
-    return DecisionTreePredictor()
-
-
-@pytest.fixture
-def xgboost_predictor() -> XGBoostPredictor:
-    return XGBoostPredictor()
 
 
 @pytest.fixture

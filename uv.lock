@@ -2,95 +2,6 @@ version = 1
 requires-python = ">=3.12"
 
 [[package]]
-name = "ai-flora-mind"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "fastapi" },
-    { name = "gunicorn" },
-    { name = "lightgbm" },
-    { name = "loguru" },
-    { name = "matplotlib" },
-    { name = "numpy" },
-    { name = "pandas" },
-    { name = "pydantic" },
-    { name = "pydantic-settings" },
-    { name = "python-dotenv" },
-    { name = "scikit-learn" },
-    { name = "seaborn" },
-    { name = "shap" },
-    { name = "structlog" },
-    { name = "tabulate" },
-    { name = "torch" },
-    { name = "uvicorn" },
-    { name = "xgboost" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "black" },
-    { name = "flake8" },
-    { name = "ipykernel" },
-    { name = "jupyter" },
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-cov" },
-    { name = "pytest-mock" },
-    { name = "python-semantic-release" },
-    { name = "requests" },
-    { name = "requests-mock" },
-    { name = "ruff" },
-    { name = "types-requests" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "mypy" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "black", marker = "extra == 'dev'", specifier = ">=24.3.0" },
-    { name = "fastapi", specifier = ">=0.115.4" },
-    { name = "flake8", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-    { name = "gunicorn", specifier = ">=23.0.0" },
-    { name = "ipykernel", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-    { name = "jupyter", marker = "extra == 'dev'", specifier = ">=1.0.0" },
-    { name = "lightgbm", specifier = ">=4.0.0" },
-    { name = "loguru", specifier = ">=0.7.0" },
-    { name = "matplotlib", specifier = ">=3.10.3" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.6.0" },
-    { name = "numpy", specifier = ">=1.25.0" },
-    { name = "pandas", specifier = ">=2.1.0" },
-    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4.2.0" },
-    { name = "pydantic", specifier = ">=2.11.5" },
-    { name = "pydantic-settings", specifier = ">=2.9.1" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.4.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.22.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.0" },
-    { name = "python-dotenv", specifier = ">=1.0.0" },
-    { name = "python-semantic-release", marker = "extra == 'dev'", specifier = ">=9.15.0" },
-    { name = "requests", marker = "extra == 'dev'", specifier = ">=2.32.0" },
-    { name = "requests-mock", marker = "extra == 'dev'", specifier = ">=1.11.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.7.1" },
-    { name = "scikit-learn", specifier = ">=1.5.0" },
-    { name = "seaborn", specifier = ">=0.13.2" },
-    { name = "shap", specifier = ">=0.42.0" },
-    { name = "structlog", specifier = ">=25.4.0" },
-    { name = "tabulate", specifier = ">=0.9.0" },
-    { name = "torch", specifier = ">=2.1.0" },
-    { name = "types-requests", marker = "extra == 'dev'", specifier = ">=2.0.0" },
-    { name = "uvicorn", specifier = ">=0.32.0" },
-    { name = "xgboost", specifier = ">=1.7.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [{ name = "mypy", specifier = ">=1.13.0" }]
-
-[[package]]
 name = "annotated-types"
 version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1348,6 +1259,95 @@ sdist = { url = "https://files.pythonhosted.org/packages/c4/79/bda47f7dd7c3c5577
 wheels = [
     { url = "https://files.pythonhosted.org/packages/01/4d/23c4e4f09da849e127e9f123241946c23c1e30f45a88366879e064211815/mistune-3.1.3-py3-none-any.whl", hash = "sha256:1a32314113cff28aa6432e99e522677c8587fd83e3d51c29b82a52409c842bd9", size = 53410 },
 ]
+
+[[package]]
+name = "ml-production-service"
+version = "0.1.2"
+source = { editable = "." }
+dependencies = [
+    { name = "fastapi" },
+    { name = "gunicorn" },
+    { name = "lightgbm" },
+    { name = "loguru" },
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "pandas" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "scikit-learn" },
+    { name = "seaborn" },
+    { name = "shap" },
+    { name = "structlog" },
+    { name = "tabulate" },
+    { name = "torch" },
+    { name = "uvicorn" },
+    { name = "xgboost" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "black" },
+    { name = "flake8" },
+    { name = "ipykernel" },
+    { name = "jupyter" },
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-cov" },
+    { name = "pytest-mock" },
+    { name = "python-semantic-release" },
+    { name = "requests" },
+    { name = "requests-mock" },
+    { name = "ruff" },
+    { name = "types-requests" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "mypy" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "black", marker = "extra == 'dev'", specifier = ">=24.3.0" },
+    { name = "fastapi", specifier = ">=0.115.4" },
+    { name = "flake8", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "gunicorn", specifier = ">=23.0.0" },
+    { name = "ipykernel", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "jupyter", marker = "extra == 'dev'", specifier = ">=1.0.0" },
+    { name = "lightgbm", specifier = ">=4.0.0" },
+    { name = "loguru", specifier = ">=0.7.0" },
+    { name = "matplotlib", specifier = ">=3.10.3" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.6.0" },
+    { name = "numpy", specifier = ">=1.25.0" },
+    { name = "pandas", specifier = ">=2.1.0" },
+    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4.2.0" },
+    { name = "pydantic", specifier = ">=2.11.5" },
+    { name = "pydantic-settings", specifier = ">=2.9.1" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.4.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.22.0" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.14.0" },
+    { name = "python-dotenv", specifier = ">=1.0.0" },
+    { name = "python-semantic-release", marker = "extra == 'dev'", specifier = ">=9.15.0" },
+    { name = "requests", marker = "extra == 'dev'", specifier = ">=2.32.0" },
+    { name = "requests-mock", marker = "extra == 'dev'", specifier = ">=1.11.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.7.1" },
+    { name = "scikit-learn", specifier = ">=1.5.0" },
+    { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "shap", specifier = ">=0.42.0" },
+    { name = "structlog", specifier = ">=25.4.0" },
+    { name = "tabulate", specifier = ">=0.9.0" },
+    { name = "torch", specifier = ">=2.1.0" },
+    { name = "types-requests", marker = "extra == 'dev'", specifier = ">=2.0.0" },
+    { name = "uvicorn", specifier = ">=0.32.0" },
+    { name = "xgboost", specifier = ">=1.7.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "mypy", specifier = ">=1.13.0" }]
 
 [[package]]
 name = "mpmath"

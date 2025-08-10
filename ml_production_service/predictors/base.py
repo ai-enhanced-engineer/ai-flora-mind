@@ -1,9 +1,4 @@
-"""
-Base predictor interface for iris species classification.
-
-Defines the abstract BasePredictor class that all concrete predictor
-implementations must inherit from.
-"""
+"""Base predictor interface for iris classification."""
 
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -12,8 +7,8 @@ from typing import Any, ClassVar, Dict
 import joblib
 from pydantic import BaseModel
 
-from ai_flora_mind.configs import IrisMeasurements
-from ai_flora_mind.logging import get_logger
+from ml_production_service.configs import IrisMeasurements
+from ml_production_service.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -26,14 +21,9 @@ class BasePredictor(BaseModel, ABC):
 
     @abstractmethod
     def predict(self, measurements: IrisMeasurements) -> str:
-        """
-        Abstract method defining the prediction interface.
-        All predictors must return one of: 'setosa', 'versicolor', or 'virginica'.
-        """
         pass
 
     def _load_model(self, model_path: str) -> Any:
-        """Common model loading functionality for ML predictors."""
         path = Path(model_path)
 
         if not path.exists():

@@ -10,19 +10,14 @@ from typing import Any, List, Tuple
 
 import numpy as np
 
-from ai_flora_mind.configs import ModelType
-from ai_flora_mind.logging import get_logger
+from ml_production_service.configs import ModelType
+from ml_production_service.logging import get_logger
 
 logger = get_logger(__name__)
 
 
 def create_petal_area_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
-    """
-    Create petal area feature combining the two most discriminative features.
-
-    This engineered feature helps decision trees better separate species
-    by combining petal length and width identified in EDA analysis.
-    """
+    """EDA insight: Petal area is the most discriminative feature for species separation."""
     petal_length = X[:, 2]
     petal_width = X[:, 3]
     petal_area: np.ndarray[Any, Any] = petal_length * petal_width
@@ -74,6 +69,7 @@ def create_area_ratio_feature(
 
 
 def create_is_likely_setosa_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
+    """EDA finding: petal_length < 2.0 provides perfect Setosa separation."""
     petal_length = X[:, 2]
     # Rule from heuristic classifier: petal_length < 2.0 indicates Setosa
     return (petal_length < 2.0).astype(float)
@@ -97,6 +93,7 @@ def create_size_index_feature(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
 
 
 def create_versicolor_vs_virginica_interaction(X: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
+    """EDA challenge: Versicolor/Virginica separation requires interaction features."""
     petal_length = X[:, 2]
     petal_width = X[:, 3]
     # Interaction combining petal features for non-Setosa discrimination
@@ -108,10 +105,7 @@ def create_versicolor_vs_virginica_interaction(X: np.ndarray[Any, Any]) -> np.nd
 def engineer_features(
     X: np.ndarray[Any, Any], feature_names: List[str], model_type: ModelType = ModelType.DECISION_TREE
 ) -> Tuple[np.ndarray[Any, Any], List[str]]:
-    """
-    Applies model-specific feature engineering transformations.
-    Different models use different feature sets for optimal performance.
-    """
+    """Model-specific feature engineering: 5 features for Decision Tree, 14 for Random Forest, 9 for XGBoost."""
     logger.info(f"Engineering features for {model_type.value}", original_features=len(feature_names), n_samples=len(X))
 
     if model_type == ModelType.HEURISTIC:
