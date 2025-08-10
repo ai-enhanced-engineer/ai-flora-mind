@@ -7,9 +7,9 @@ for species prediction with perfect Setosa separation.
 
 from pydantic import validate_call
 
-from ai_flora_mind.configs import IrisMeasurements
-from ai_flora_mind.logging import get_logger
-from ai_flora_mind.predictors.base import BasePredictor
+from ml_production_service.configs import IrisMeasurements
+from ml_production_service.logging import get_logger
+from ml_production_service.predictors.base import BasePredictor
 
 logger = get_logger(__name__)
 

@@ -1,8 +1,8 @@
 """
-Random Forest predictor for iris species classification.
+Decision Tree predictor for iris species classification.
 
-Implements a machine learning predictor using pre-trained Random Forest models
-with comprehensive feature engineering for maximum accuracy.
+Implements a machine learning predictor using pre-trained Decision Tree models
+with minimal feature engineering for maximum interpretability.
 """
 
 from typing import Any
@@ -10,52 +10,52 @@ from typing import Any
 import numpy as np
 from pydantic import validate_call
 
-from ai_flora_mind.configs import IrisMeasurements, ModelType
-from ai_flora_mind.features import engineer_features, get_feature_names
-from ai_flora_mind.logging import get_logger
-from ai_flora_mind.predictors.base import BasePredictor
+from ml_production_service.configs import IrisMeasurements, ModelType
+from ml_production_service.features import engineer_features, get_feature_names
+from ml_production_service.logging import get_logger
+from ml_production_service.predictors.base import BasePredictor
 
 logger = get_logger(__name__)
 
 
-class RandomForestPredictor(BasePredictor):
+class DecisionTreePredictor(BasePredictor):
     """
-    Random Forest predictor for iris species classification.
+    Decision Tree predictor for iris species classification.
 
-    Loads a pre-trained Random Forest model and applies comprehensive feature engineering
-    for maximum accuracy. Uses all 14 features (4 original + 10 engineered) as identified
-    in EDA analysis.
+    Loads a pre-trained Decision Tree model and applies minimal feature engineering
+    for maximum interpretability. Uses 5 features (4 original + petal_area) optimized
+    for decision tree performance.
     """
 
     model_path: str
     model: Any = None  # Will hold the loaded sklearn model
 
-    def __init__(self, model_path: str = "registry/prd/random_forest.joblib"):
+    def __init__(self, model_path: str = "registry/prd/decision_tree.joblib"):
         super().__init__(model_path=model_path)
         self.model = self._load_model(model_path)
 
         logger.info(
-            "RandomForestPredictor initialized",
+            "DecisionTreePredictor initialized",
             model_path=self.model_path,
-            model_type="RandomForestClassifier",
-            n_estimators=getattr(self.model, "n_estimators", "unknown"),
-            features_expected=14,  # 4 original + 10 engineered
+            model_type="DecisionTreeClassifier",
+            max_depth=getattr(self.model, "max_depth", "unknown"),
+            features_expected=5,  # 4 original + petal_area
         )
 
     def _prepare_features(self, measurements: IrisMeasurements) -> np.ndarray[Any, Any]:
         """
-        Applies Random Forest feature engineering to create 14-feature vector
-        (4 original + 10 engineered features).
+        Applies Decision Tree feature engineering to create 5-feature vector
+        (4 original + petal_area).
         """
         # Convert single measurement to array format
         X = measurements.to_array().reshape(1, -1)
 
-        # Apply Random Forest feature engineering (all 14 features)
+        # Apply Decision Tree feature engineering (5 features)
         feature_names = get_feature_names()
-        X_engineered, feature_names_enhanced = engineer_features(X, feature_names, ModelType.RANDOM_FOREST)
+        X_engineered, feature_names_enhanced = engineer_features(X, feature_names, ModelType.DECISION_TREE)
 
         logger.debug(
-            "Features prepared for Random Forest",
+            "Features prepared for Decision Tree",
             original_features=len(feature_names),
             engineered_features=len(feature_names_enhanced),
             shape=X_engineered.shape,
@@ -65,7 +65,7 @@ class RandomForestPredictor(BasePredictor):
 
     @validate_call
     def predict(self, measurements: IrisMeasurements) -> str:
-        """Random Forest implementation with comprehensive feature engineering."""
+        """Decision Tree implementation with minimal feature engineering for interpretability."""
         logger.debug(
             "Single prediction request",
             sepal_length=measurements.sepal_length,
@@ -85,10 +85,10 @@ class RandomForestPredictor(BasePredictor):
         prediction = self.SPECIES_MAP[prediction_numeric]
 
         logger.debug(
-            "Random Forest prediction completed",
+            "Decision Tree prediction completed",
             prediction=prediction,
             features_used=X_features.shape[1],
-            model_confidence="available_via_predict_proba",
+            model_interpretability="high_with_decision_paths",
         )
 
         return prediction

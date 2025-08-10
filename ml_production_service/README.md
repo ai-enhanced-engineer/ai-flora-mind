@@ -1,6 +1,6 @@
-# AI Flora Mind - Production Application
+# ML Production Service - Core Application
 
-This directory contains the production-ready iris classification API with enterprise-grade features and clean architecture principles.
+This directory contains the production-ready ML classification API with enterprise-grade features and clean architecture principles.
 
 [← Back to main README](../README.md)
 
@@ -8,7 +8,7 @@ This directory contains the production-ready iris classification API with enterp
 
 ### Design Principles
 
-The application follows a **configuration-driven, polymorphic architecture** with clear separation of concerns. This design pattern uses dependency injection with a factory to instantiate the appropriate ML model based on environment configuration. The FastAPI layer remains agnostic to which specific model it uses - it simply calls a common interface that all models implement. This architecture enables seamless model switching through a single environment variable (`FLORA_CLASSIFIER_TYPE`), making it trivial to deploy different models or conduct A/B testing by deploying different services with unique algorithms. The diagram below shows how components interact: configuration flows from the environment to the API layer, which uses a factory to create the right predictor based on the model registry, with all predictors implementing the same interface:
+The application follows a **configuration-driven, polymorphic architecture** with clear separation of concerns. This design pattern uses dependency injection with a factory to instantiate the appropriate ML model based on environment configuration. The FastAPI layer remains agnostic to which specific model it uses - it simply calls a common interface that all models implement. This architecture enables seamless model switching through a single environment variable (`MPS_MODEL_TYPE`), making it trivial to deploy different models or conduct A/B testing by deploying different services with unique algorithms. The diagram below shows how components interact: configuration flows from the environment to the API layer, which uses a factory to create the right predictor based on the model registry, with all predictors implementing the same interface:
 
 ```
 +---------------------+     +------------------+
@@ -79,8 +79,8 @@ The application follows a **configuration-driven, polymorphic architecture** wit
 ### 1. Configuration-Driven Architecture
 ```bash
 # Switch models without code changes
-FLORA_CLASSIFIER_TYPE=decision_tree make api-run  # Local development
-FLORA_CLASSIFIER_TYPE=decision_tree make service-start  # Docker deployment
+MPS_MODEL_TYPE=decision_tree make api-run  # Local development
+MPS_MODEL_TYPE=decision_tree make service-start  # Docker deployment
 ```
 
 ### 2. Comprehensive Error Handling
@@ -117,11 +117,11 @@ logger.info("prediction_made",
 
 ## Usage Examples
 
-See the [main README's Quick Start section](../README.md#quick-start-get-it-running-in-2-minutes) for comprehensive usage examples including:
+See the [main README's Quick Start section](../README.md#quick-start) for comprehensive usage examples including:
 - Local development with `make api-run`
 - Docker deployment with `make service-start`
 - API testing with curl commands
-- Model switching via `FLORA_CLASSIFIER_TYPE`
+- Model switching via `MPS_MODEL_TYPE`
 
 For health checks: `curl http://localhost:8000/health` returns `{"status": "healthy"}`.
 
@@ -138,8 +138,8 @@ The application includes a production-ready Dockerfile:
 
 Build and run:
 ```bash
-docker build -t ai-flora-mind .
-docker run -p 8000:8000 -e FLORA_CLASSIFIER_TYPE=decision_tree ai-flora-mind
+docker build -t ml-production-service .
+docker run -p 8000:8000 -e MPS_MODEL_TYPE=decision_tree ml-production-service
 ```
 
 ## Performance Characteristics
@@ -151,7 +151,7 @@ docker run -p 8000:8000 -e FLORA_CLASSIFIER_TYPE=decision_tree ai-flora-mind
 | Random Forest | 96.0% |
 | XGBoost | 96.0% |
 
-*Note: Inference times are sub-millisecond for heuristic and tree-based models, with ensemble methods taking slightly longer due to multiple tree evaluations.*
+*Note: Inference times are sub-millisecond for heuristic and tree-based models, with ensemble methods taking slightly longer due to multiple tree evaluations. These results are based on the Iris dataset used as a demonstration.*
 
 For detailed performance analysis and validation results, see the [research findings summary](../research/README.md#key-findings-summary).
 

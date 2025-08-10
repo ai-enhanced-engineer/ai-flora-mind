@@ -9,8 +9,8 @@ from typing import List, Tuple
 
 import pytest
 
-from ai_flora_mind.configs import IrisMeasurements
-from ai_flora_mind.predictors import BasePredictor, HeuristicPredictor
+from ml_production_service.configs import IrisMeasurements
+from ml_production_service.predictors import BasePredictor, HeuristicPredictor
 
 # ----------------------
 # Initialization Tests

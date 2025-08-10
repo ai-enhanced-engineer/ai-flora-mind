@@ -1,6 +1,6 @@
-# AI Flora Mind
+# ML Production Service
 
-A modern implementation of a production-grade machine learning service showcasing the complete journey from research to deployment. Built with a focus on clean architecture, this project demonstrates how to create ML systems that are both scientifically rigorous and production-ready.
+A reference implementation for taking machine learning models from research to production. This project demonstrates the complete journey from exploratory data analysis through model training to production-grade API deployment, showcasing best practices for building maintainable ML services.
 
 ## Why This Project?
 
@@ -27,7 +27,7 @@ This reference implementation demonstrates patterns applicable to:
 
 ```
 ┌─────────────────┐     ┌─────────────────────┐     ┌──────────────────┐
-│   Client Apps   │────▶│  AI Flora Mind API  │────▶│  Model Registry  │
+│   Client Apps   │────▶│ ML Production API   │────▶│  Model Registry  │
 │   (REST API)    │     │    (FastAPI)        │     │  (4 algorithms)  │
 └─────────────────┘     └──────────┬──────────┘     └──────────────────┘
                                    │
@@ -51,8 +51,8 @@ The service uses a polymorphic predictor interface with dependency injection, al
 ## Project Structure
 
 ```
-ai-flora-mind/
-├── ai_flora_mind/          # Core application (see ai_flora_mind/README.md)
+ml-production-service/
+├── ml_production_service/  # Core application (see ml_production_service/README.md)
 │   ├── predictors/         # ML model implementations
 │   ├── server/             # FastAPI application
 │   └── factory.py          # Dependency injection
@@ -86,14 +86,14 @@ Get the service running with your choice of ML algorithm in under 2 minutes:
 Clone and set up your environment:
 
 ```bash
-git clone https://github.com/yourusername/ai-flora-mind
-cd ai-flora-mind
+git clone https://github.com/yourusername/ml-production-service
+cd ml-production-service
 make environment-create
 ```
 
 ### 2. Choose Your Model
 
-The service includes 4 production-ready models with different characteristics:
+The service includes 4 production-ready models with different characteristics, demonstrated using the classic Iris dataset:
 
 | Model | Accuracy | Inference Speed | Interpretability |
 |-------|----------|-----------------|------------------|
@@ -108,14 +108,14 @@ Start the API with your chosen model:
 
 ```bash
 # Using the heuristic model (fastest, most interpretable)
-FLORA_CLASSIFIER_TYPE=heuristic make api-run
+MPS_MODEL_TYPE=heuristic make api-run
 
 # Using the decision tree (best accuracy)
-FLORA_CLASSIFIER_TYPE=decision_tree make api-run
+MPS_MODEL_TYPE=decision_tree make api-run
 
 # Using ensemble methods
-FLORA_CLASSIFIER_TYPE=random_forest make api-run
-FLORA_CLASSIFIER_TYPE=xgboost make api-run
+MPS_MODEL_TYPE=random_forest make api-run
+MPS_MODEL_TYPE=xgboost make api-run
 ```
 
 The API will start at `http://localhost:8000` with interactive docs at `/docs`.
@@ -123,7 +123,7 @@ The API will start at `http://localhost:8000` with interactive docs at `/docs`.
 ### 4. Test the API
 
 ```bash
-# Predict iris species from measurements
+# Predict iris species from measurements (example using iris dataset)
 curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
   -d '{"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}'
@@ -137,7 +137,7 @@ For production deployment with Docker:
 
 ```bash
 # Build and start with your chosen model
-FLORA_CLASSIFIER_TYPE=decision_tree make service-start
+MPS_MODEL_TYPE=decision_tree make service-start
 
 # Validate the service
 make service-validate
@@ -151,22 +151,22 @@ make service-stop
 ### Endpoints
 
 #### `POST /predict`
-Classify iris species from measurements.
+Classify input based on measurements (demonstrated with iris species).
 
 **Request:**
 ```json
 {
-  "sepal_length": 5.1,  // Sepal length in cm
-  "sepal_width": 3.5,   // Sepal width in cm
-  "petal_length": 1.4,  // Petal length in cm
-  "petal_width": 0.2    // Petal width in cm
+  "sepal_length": 5.1,  // Feature 1
+  "sepal_width": 3.5,   // Feature 2
+  "petal_length": 1.4,  // Feature 3
+  "petal_width": 0.2    // Feature 4
 }
 ```
 
 **Response:**
 ```json
 {
-  "prediction": "setosa"  // One of: "setosa", "versicolor", "virginica"
+  "prediction": "setosa"  // Classification result
 }
 ```
 
@@ -191,11 +191,11 @@ Health check endpoint for monitoring.
 
 | Variable | Description | Default | Options |
 |----------|-------------|---------|---------|
-| `FLORA_CLASSIFIER_TYPE` | ML algorithm to use | `heuristic` | `heuristic`, `decision_tree`, `random_forest`, `xgboost` |
-| `FLORA_MODEL_PATH` | Path to model artifacts | `registry/prd` | Any valid path |
-| `FLORA_LOG_LEVEL` | Logging verbosity | `INFO` | `DEBUG`, `INFO`, `WARNING`, `ERROR` |
-| `FLORA_API_HOST` | API bind address | `0.0.0.0` | Any valid host |
-| `FLORA_API_PORT` | API port | `8000` | Any valid port |
+| `MPS_MODEL_TYPE` | ML algorithm to use | `heuristic` | `heuristic`, `decision_tree`, `random_forest`, `xgboost` |
+| `MPS_MODEL_PATH` | Path to model artifacts | `registry/prd` | Any valid path |
+| `MPS_LOG_LEVEL` | Logging verbosity | `INFO` | `DEBUG`, `INFO`, `WARNING`, `ERROR` |
+| `MPS_API_HOST` | API bind address | `0.0.0.0` | Any valid host |
+| `MPS_API_PORT` | API port | `8000` | Any valid port |
 
 ## Development
 
@@ -214,7 +214,7 @@ make functional-test     # Functional tests
 make integration-test    # Integration tests
 make all-test           # All tests with coverage
 
-# Research experiments
+# Research experiments (using iris dataset as example)
 make eval-heuristic      # Evaluate rule-based baseline
 make train-decision-tree # Train decision tree variants
 make train-random-forest # Train random forest variants
@@ -225,7 +225,7 @@ make train-xgboost      # Train XGBoost variants
 
 The architecture makes it easy to add new ML algorithms:
 
-1. Create predictor class in `ai_flora_mind/predictors/`
+1. Create predictor class in `ml_production_service/predictors/`
 2. Implement the `BasePredictor` interface
 3. Add model type to `ModelType` enum
 4. Register in factory function
@@ -239,15 +239,17 @@ This project includes comprehensive ML research demonstrating the journey from b
 
 ### Research Highlights
 
-- **Comprehensive EDA** revealing perfect class separation and feature relationships
+- **Comprehensive EDA** revealing class separation and feature relationships
 - **Systematic experimentation** progressing from simple rules to ensemble methods
 - **Multiple validation strategies** including LOOCV, k-fold CV, and OOB estimation
 - **Production considerations** balancing accuracy, interpretability, and performance
 
 ### Key Findings
 
-1. **Simple models match complex ones** - The iris dataset has a ~96% performance ceiling
-2. **Feature engineering helps** - Adding petal area improves tree-based models
+Using the Iris dataset as our demonstration:
+
+1. **Simple models match complex ones** - The dataset has a ~96% performance ceiling
+2. **Feature engineering helps** - Adding derived features improves tree-based models
 3. **Ensemble methods plateau** - Diminishing returns beyond simple algorithms
 4. **Heuristics are powerful** - Domain knowledge encoded as rules achieves 96% accuracy
 
@@ -261,12 +263,12 @@ Production-ready multi-stage Dockerfile included:
 
 ```bash
 # Build image
-docker build -t ai-flora-mind .
+docker build -t ml-production-service .
 
 # Run with model selection
 docker run -p 8000:8000 \
-  -e FLORA_CLASSIFIER_TYPE=decision_tree \
-  ai-flora-mind
+  -e MPS_MODEL_TYPE=decision_tree \
+  ml-production-service
 ```
 
 ### Cloud Platforms
@@ -275,9 +277,9 @@ Deploy to any container platform:
 
 ```bash
 # Google Cloud Run
-gcloud run deploy ai-flora-mind \
-  --image gcr.io/your-project/ai-flora-mind \
-  --set-env-vars FLORA_CLASSIFIER_TYPE=decision_tree
+gcloud run deploy ml-production-service \
+  --image gcr.io/your-project/ml-production-service \
+  --set-env-vars MPS_MODEL_TYPE=decision_tree
 
 # AWS ECS, Kubernetes, etc.
 # Use platform-specific deployment configs
@@ -320,7 +322,7 @@ This project demonstrates best practices for ML service development. Contributio
 
 ## Documentation
 
-- [`ai_flora_mind/README.md`](ai_flora_mind/README.md) - Application architecture details
+- [`ml_production_service/README.md`](ml_production_service/README.md) - Application architecture details
 - [`research/README.md`](research/README.md) - ML research documentation
 - [`CLAUDE.md`](CLAUDE.md) - Comprehensive development guide
 - [`registry/prd/README.md`](registry/prd/README.md) - Model registry documentation

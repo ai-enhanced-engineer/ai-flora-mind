@@ -12,8 +12,8 @@ from typing import Any, ClassVar, Dict
 import joblib
 from pydantic import BaseModel
 
-from ai_flora_mind.configs import IrisMeasurements
-from ai_flora_mind.logging import get_logger
+from ml_production_service.configs import IrisMeasurements
+from ml_production_service.logging import get_logger
 
 logger = get_logger(__name__)
 

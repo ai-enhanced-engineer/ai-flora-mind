@@ -10,7 +10,7 @@ from typing import Any, List, Tuple
 
 import numpy as np
 
-from ai_flora_mind.logging import get_logger
+from ml_production_service.logging import get_logger
 
 logger = get_logger(__name__)
 

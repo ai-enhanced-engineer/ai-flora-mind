@@ -7,8 +7,8 @@ model loading, feature engineering, prediction functionality, and error handling
 
 import pytest
 
-from ai_flora_mind.configs import IrisMeasurements
-from ai_flora_mind.predictors import BasePredictor, RandomForestPredictor
+from ml_production_service.configs import IrisMeasurements
+from ml_production_service.predictors import BasePredictor, RandomForestPredictor
 
 # ----------------------
 # Initialization Tests

@@ -5,9 +5,9 @@ This module provides factory functions to create the appropriate predictor
 instance based on configuration settings.
 """
 
-from ai_flora_mind.configs import ModelType, ServiceConfig
-from ai_flora_mind.logging import get_logger
-from ai_flora_mind.predictors import (
+from ml_production_service.configs import ModelType, ServiceConfig
+from ml_production_service.logging import get_logger
+from ml_production_service.predictors import (
     BasePredictor,
     DecisionTreePredictor,
     HeuristicPredictor,

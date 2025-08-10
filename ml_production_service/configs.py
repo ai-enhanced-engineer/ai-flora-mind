@@ -1,5 +1,5 @@
 """
-Configuration models for AI Flora Mind.
+Configuration models for ML Production Service.
 
 This module contains Pydantic models for configuration and data validation
 across the application.
@@ -39,7 +39,7 @@ class ModelType(Enum):
 
 class ServiceConfig(BaseSettings):
     """
-    Service configuration for AI Flora Mind.
+    Service configuration for ML Production Service.
 
     Reads configuration from environment variables to determine which
     predictor model to use for iris species classification.
@@ -48,10 +48,10 @@ class ServiceConfig(BaseSettings):
     model_type: ModelType = Field(
         default=ModelType.HEURISTIC,
         description="Type of predictor model to use for iris classification",
-        alias="FLORA_CLASSIFIER_TYPE",
+        alias="MPS_MODEL_TYPE",
     )
 
-    model_config = {"env_prefix": "FLORA_", "case_sensitive": False, "extra": "ignore"}
+    model_config = {"env_prefix": "MPS_", "case_sensitive": False, "extra": "ignore"}
 
     def get_model_path(self) -> str | None:
         """Get the model path based on model type and environment.

@@ -1,4 +1,4 @@
-# Development Guide - AI Flora Mind
+# Development Guide - ML Production Service
 
 Complete development guide consolidating essential information for efficient development.
 
@@ -21,15 +21,15 @@ Complete development guide consolidating essential information for efficient dev
 - **Start service**: `make service-start` (starts API at http://localhost:8000)
 - **Stop service**: `make service-stop` (stops running service)
 - **Quick start**: `make service-quick-start` (build + start in one command)
-- **Model selection**: `FLORA_CLASSIFIER_TYPE=<type> make service-start`
+- **Model selection**: `MPS_MODEL_TYPE=<type> make service-start`
   - Available types: `heuristic`, `decision_tree`, `random_forest`, `xgboost`
 
 ### API Development
 - **Start API locally**: `make api-run` (with auto-reload)
-  - `FLORA_CLASSIFIER_TYPE=heuristic make api-run` - Rule-based classifier
-  - `FLORA_CLASSIFIER_TYPE=decision_tree make api-run` - Decision tree (96% accuracy)
-  - `FLORA_CLASSIFIER_TYPE=random_forest make api-run` - Random forest (96% accuracy)
-  - `FLORA_CLASSIFIER_TYPE=xgboost make api-run` - XGBoost (not implemented)
+  - `MPS_MODEL_TYPE=heuristic make api-run` - Rule-based classifier
+  - `MPS_MODEL_TYPE=decision_tree make api-run` - Decision tree (96% accuracy)
+  - `MPS_MODEL_TYPE=random_forest make api-run` - Random forest (96% accuracy)
+  - `MPS_MODEL_TYPE=xgboost make api-run` - XGBoost (not implemented)
   - `make api-run ARGS='--model-type decision_tree --log-level debug'` - CLI arguments
   - `make api-run ARGS='--port 8001 --host localhost'` - Custom port/host
 - **Validate API**: `make api-validate` (run comprehensive tests)
@@ -360,9 +360,9 @@ This guide provides comprehensive information needed for effective development, 
 
 ---
 
-# 🌸 PROJECT-SPECIFIC: AI Flora Mind Integration Patterns
+# 🌸 PROJECT-SPECIFIC: ML Production Service Integration Patterns
 
-**Note**: This section contains project-specific patterns and processes for the AI Flora Mind iris classification system.
+**Note**: This section contains project-specific patterns and processes for the ML Production Service iris classification system.
 
 ## Adding New Predictors - Complete Integration Process
 
@@ -371,7 +371,7 @@ This documents the exact process we followed to integrate the Random Forest pred
 ### Phase 1: Predictor Implementation
 
 #### 1.1 Create Predictor Class
-- **Location**: `ai_flora_mind/predictors/{algorithm_name}.py`
+- **Location**: `ml_production_service/predictors/{algorithm_name}.py`
 - **Pattern**: Inherit from `BasePredictor` abstract class
 - **Requirements**:
   - Implement `predict(measurements: IrisMeasurements) -> str` method
@@ -381,7 +381,7 @@ This documents the exact process we followed to integrate the Random Forest pred
 
 **Example Structure**:
 ```python
-# ai_flora_mind/predictors/random_forest.py
+# ml_production_service/predictors/random_forest.py
 class RandomForestPredictor(BasePredictor):
     def __init__(self, model_path: str) -> None:
         # Model loading with error handling
@@ -391,7 +391,7 @@ class RandomForestPredictor(BasePredictor):
 ```
 
 #### 1.2 Update Predictor Module
-- **File**: `ai_flora_mind/predictors/__init__.py`
+- **File**: `ml_production_service/predictors/__init__.py`
 - **Action**: Export new predictor class
 ```python
 from .random_forest import RandomForestPredictor
@@ -410,7 +410,7 @@ from .random_forest import RandomForestPredictor
 ### Phase 2: Configuration Integration
 
 #### 2.1 Add Model Type Enum
-- **File**: `ai_flora_mind/configs.py`
+- **File**: `ml_production_service/configs.py`
 - **Pattern**: Add to `ModelType` enum
 ```python
 class ModelType(Enum):
@@ -420,7 +420,7 @@ class ModelType(Enum):
 ```
 
 #### 2.2 Update Model Path Configuration
-- **File**: `ai_flora_mind/configs.py`
+- **File**: `ml_production_service/configs.py`
 - **Method**: `ServiceConfig.get_model_path()`
 - **Pattern**: Add new case to match statement
 ```python
@@ -432,7 +432,7 @@ match self.model_type:
 ### Phase 3: Factory Integration
 
 #### 3.1 Register Predictor in Factory
-- **File**: `ai_flora_mind/factory.py`
+- **File**: `ml_production_service/factory.py`
 - **Pattern**: Add elif clause in `get_predictor()` function
 ```python
 elif config.model_type == ModelType.NEW_ALGORITHM:
@@ -491,8 +491,8 @@ make all-test-validate-branch  # Must pass 90% coverage
 - **Action**: No changes needed (registry/prd/ already copied)
 - **Verification**: Build and test Docker image
 ```bash
-docker build -t ai-flora-mind:test .
-FLORA_CLASSIFIER_TYPE=new_algorithm docker run --rm ai-flora-mind:test
+docker build -t ml-production-service:test .
+MPS_MODEL_TYPE=new_algorithm docker run --rm ml-production-service:test
 ```
 
 ### Phase 7: Documentation and Deployment
@@ -503,7 +503,7 @@ FLORA_CLASSIFIER_TYPE=new_algorithm docker run --rm ai-flora-mind:test
 ```yaml
 environment:
   # Options: heuristic, random_forest, new_algorithm
-  - FLORA_CLASSIFIER_TYPE=${FLORA_CLASSIFIER_TYPE:-heuristic}
+  - MPS_MODEL_TYPE=${MPS_MODEL_TYPE:-heuristic}
 ```
 
 #### 7.2 Update CLI Tools
@@ -539,7 +539,7 @@ feat: integrate {AlgorithmName} predictor with production registry
 - Register {algorithm_name} model type in configuration and factory
 - Promote trained model to registry/prd/{algorithm_name}.joblib
 - Update API integration tests to include {algorithm_name} model type
-- Verify service deployment with `FLORA_CLASSIFIER_TYPE={algorithm_name} make service-start`
+- Verify service deployment with `MPS_MODEL_TYPE={algorithm_name} make service-start`
 
 Model Performance: {accuracy}% accuracy on test set
 Production Ready: All tests pass, Docker verified, documentation updated
@@ -570,7 +570,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - **Error Tracking**: Monitor prediction failures and model loading issues
 - **Resource Usage**: Memory and CPU consumption per model type
 
-This integration process ensures consistent, testable, and maintainable predictor additions to the AI Flora Mind system.
+This integration process ensures consistent, testable, and maintainable predictor additions to the ML Production Service system.
 
 ## Research Experiment Documentation Template
 

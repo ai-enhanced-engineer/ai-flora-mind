@@ -4,8 +4,8 @@ import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient, Response
 
-from ai_flora_mind.configs import ModelType
-from ai_flora_mind.server.schemas import IrisPredictionResponse
+from ml_production_service.configs import ModelType
+from ml_production_service.server.schemas import IrisPredictionResponse
 
 # ----------------------
 # Fixture Setup
@@ -21,9 +21,9 @@ async def async_client(
     model_type: ModelType = request.param
 
     # Set environment variable for model type
-    monkeypatch.setenv("FLORA_CLASSIFIER_TYPE", model_type.value)
+    monkeypatch.setenv("MPS_MODEL_TYPE", model_type.value)
 
-    from ai_flora_mind.server.main import get_app
+    from ml_production_service.server.main import get_app
 
     transport = ASGITransport(app=get_app())
     async with AsyncClient(transport=transport, base_url="http://testserver") as ac:
@@ -32,9 +32,9 @@ async def async_client(
 
 @pytest_asyncio.fixture(scope="function")
 async def async_client_heuristic(monkeypatch: pytest.MonkeyPatch) -> AsyncGenerator[AsyncClient, None]:
-    monkeypatch.setenv("FLORA_CLASSIFIER_TYPE", ModelType.HEURISTIC.value)
+    monkeypatch.setenv("MPS_MODEL_TYPE", ModelType.HEURISTIC.value)
 
-    from ai_flora_mind.server.main import get_app
+    from ml_production_service.server.main import get_app
 
     transport = ASGITransport(app=get_app())
     async with AsyncClient(transport=transport, base_url="http://testserver") as ac:

@@ -14,7 +14,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.utils import Bunch
 
-from ai_flora_mind.logging import get_logger
+from ml_production_service.logging import get_logger
 from research.experiments.constants import RESULTS_DIR
 
 logger = get_logger(__name__)

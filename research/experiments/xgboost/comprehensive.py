@@ -19,7 +19,7 @@ import numpy as np
 import xgboost as xgb
 from sklearn.model_selection import LeaveOneOut, RepeatedStratifiedKFold, cross_val_score
 
-from ai_flora_mind.logging import get_logger
+from ml_production_service.logging import get_logger
 from research.data import load_iris_data
 from research.evaluation import evaluate_model, log_performance_summary
 from research.experiments.constants import MODELS_DIR, RESULTS_DIR

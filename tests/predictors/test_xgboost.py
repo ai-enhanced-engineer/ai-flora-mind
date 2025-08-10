@@ -9,8 +9,8 @@ import os
 
 import pytest
 
-from ai_flora_mind.configs import IrisMeasurements
-from ai_flora_mind.predictors import BasePredictor, XGBoostPredictor
+from ml_production_service.configs import IrisMeasurements
+from ml_production_service.predictors import BasePredictor, XGBoostPredictor
 
 # ----------------------
 # Initialization Tests

@@ -1,4 +1,4 @@
-"""HTTP API entry point for the AI Flora Mind iris prediction service."""
+"""HTTP API entry point for the ML Production Service prediction API."""
 
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
@@ -15,9 +15,9 @@ configure_structlog()
 logger = get_logger(__name__)
 
 
-class FloraAPI:
+class MLProductionAPI:
     def __init__(self) -> None:
-        logger.info("Initializing Flora API service")
+        logger.info("Initializing ML Production Service API")
 
         # Load configuration and initialize the predictor
         config = ServiceConfig()
@@ -29,8 +29,8 @@ class FloraAPI:
         )
 
         self.app: FastAPI = FastAPI(
-            title="AI Flora Mind",
-            description="Iris flower species prediction API",
+            title="ML Production Service",
+            description="Production-grade ML prediction API demonstrating research-to-production workflow",
             version="0.1.0",
             lifespan=self.lifespan,
         )
@@ -89,5 +89,5 @@ class FloraAPI:
 
 
 def get_app() -> FastAPI:
-    flora_api = FloraAPI()
-    return flora_api.app
+    ml_api = MLProductionAPI()
+    return ml_api.app
